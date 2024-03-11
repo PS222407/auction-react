@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import Navv from "./Layout/Navv.jsx";
 
 function App() {
     const [config, setConfig] = useState("");
@@ -13,6 +14,8 @@ function App() {
 
     return (
         <>
+            <Navv />
+
             <div>lorem ipsum</div>
             <h1>API_URL FROM CONFIG</h1>
             <h2>{config.API_URL}</h2>
