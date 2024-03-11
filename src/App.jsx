@@ -16,6 +16,10 @@ function App() {
             <div>lorem ipsum</div>
             <h1>API_URL FROM CONFIG</h1>
             <h2>{config.API_URL}</h2>
+
+            <h1 className="text-3xl font-bold underline bg-red-500">
+                Hello world!
+            </h1>
         </>
     )
 }
