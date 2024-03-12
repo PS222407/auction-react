@@ -1,8 +1,9 @@
 version: "3.8"
 services:
   app:
-    image: node:alpine
-    entrypoint: /bin/sh
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 5173:5173
     working_dir: /app
@@ -11,11 +12,3 @@ services:
         source: ./
         target: /app
     tty: true
-
-#version: "3.8"
-#services:
-#  app:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-

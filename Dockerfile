@@ -6,5 +6,4 @@ RUN npm install -g npm@latest
 
 EXPOSE 5173
 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
-#CMD [ "npm", "run", "dev" ]
+ENTRYPOINT ["/bin/sh"]

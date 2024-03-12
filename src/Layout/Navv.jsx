@@ -75,7 +75,7 @@ function Navv() {
                                 >
                             </li>
                         </ul>
-                        <div className="w-[300px] lg:pe-2">
+                        <div className="bg-white w-[300px] lg:pe-2">
                             <div className="relative flex w-full flex-wrap items-stretch">
                                 <input
                                     type="search"
