@@ -1,15 +1,21 @@
 version: "3.8"
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: node:alpine
+    entrypoint: /bin/sh
     ports:
-      - "5173:5173"
+      - 5173:5173
+    working_dir: /app
     volumes:
-      - ./:/app
+      - type: bind
+        source: ./
+        target: /app
+    tty: true
 
-networks:
-  default:
-    external: true
-    name: auctionapi_network
+#version: "3.8"
+#services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+
