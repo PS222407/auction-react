@@ -4,7 +4,6 @@ import Category from "../Category.jsx";
 
 function HomePage() {
     const [config, setConfig] = useState("");
-    const [roles, setRoles] = useState([]);
 
     useEffect(() => {
         async function getConfig() {
@@ -13,17 +12,6 @@ function HomePage() {
 
         getConfig();
     }, []);
-
-    useEffect(() => {
-        fetchRoles();
-    }, [config]);
-
-    async function fetchRoles() {
-        const response = await fetch(`${config.API_URL}/api/v1/Role`);
-        const data = await response.json();
-        console.log(data);
-        setRoles(data);
-    }
 
     const categories = [
         {
@@ -54,15 +42,6 @@ function HomePage() {
                             <Category key={category.id} category={category} />
                         ))
                     }
-                </div>
-
-                <div>
-                    <h1>Roles</h1>
-                    <ul>
-                        {roles.map((role) => (
-                            <li key={role.id}>{role.name}</li>
-                        ))}
-                    </ul>
                 </div>
             </div>
         </>

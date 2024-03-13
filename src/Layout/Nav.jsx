@@ -97,6 +97,11 @@ function Nav() {
                                 </button>
                             </div>
                         </div>
+                        <div>
+                            {
+                                !!localStorage.getItem('auth') ? 'true' : 'false'
+                            }
+                        </div>
                         <a className="me-4 text-neutral-600 dark:text-white" href="#">
                             <span className="[&>svg]:w-8">
                               <svg

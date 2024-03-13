@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "dayjs": "^1.11.10",
+    "flowbite": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
+    "react-toastify": "^10.0.4",
     "tw-elements": "^2.0.0"
   },
   "devDependencies": {
