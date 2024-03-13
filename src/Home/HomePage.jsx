@@ -45,7 +45,7 @@ function HomePage() {
 
     return (
         <>
-            <Nav/>
+            <Nav />
 
             <div className={"mx-4 2xl:mx-auto max-w-screen-2xl mt-10"}>
                 <div className={"flex flex-col sm:flex-row gap-4"}>
