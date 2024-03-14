@@ -2,9 +2,11 @@ import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {initTWE, Input, Ripple} from "tw-elements";
 import {Link} from "react-router-dom";
+import dayjs from "dayjs";
 
 function ProductCreate() {
     const [config, setConfig] = useState("");
+    const [accessToken, setAccessToken] = useState();
     const [productForm, setProductForm] = useState({
         name: '',
         description: '',
@@ -13,6 +15,9 @@ function ProductCreate() {
 
     useEffect(() => {
         initTWE({Input, Ripple});
+        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
+            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
+        }
 
         async function getConfig() {
             setConfig(await fetch('/config.json').then((res) => res.json()));
@@ -46,9 +51,7 @@ function ProductCreate() {
         const response = await fetch(`${config.API_URL}/api/v1/Product`, {
             method: "POST",
             headers: {
-                // "Accept": "application/json",
-                // "Content-Type": "multipart/form-data",
-                // "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + accessToken,
             },
             body: formData,
         });

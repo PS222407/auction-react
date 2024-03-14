@@ -141,25 +141,32 @@ function Nav() {
                                     <Link
                                         className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
                                         to="/login"
-                                        data-twe-dropdown-item-ref=""
-                                    >Login</Link
-                                    >
+                                        data-twe-dropdown-item-ref="">
+                                        Login
+                                    </Link>
                                 </li>
                                 <li>
-                                    <a
-                                        className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                    <a className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
                                         href="/register"
-                                        data-twe-dropdown-item-ref=""
-                                    >Register</a
-                                    >
+                                        data-twe-dropdown-item-ref="">
+                                        Register
+                                    </a>
                                 </li>
                                 <li>
-                                    <a
-                                        className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                    <a className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
                                         href="/account"
-                                        data-twe-dropdown-item-ref=""
-                                    >Account</a
-                                    >
+                                        data-twe-dropdown-item-ref="">
+                                        Account
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onClick={() => {
+                                        localStorage.removeItem("auth");
+                                        window.location.reload();
+                                    }} className="block cursor-pointer w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                       data-twe-dropdown-item-ref="">
+                                        Logout
+                                    </a>
                                 </li>
                             </ul>
                         </div>

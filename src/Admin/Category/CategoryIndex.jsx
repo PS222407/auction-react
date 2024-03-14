@@ -1,12 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
+import dayjs from "dayjs";
 
 function CategoryIndex() {
     const [config, setConfig] = useState("");
     const [categories, setCategories] = useState([]);
+    const [accessToken, setAccessToken] = useState();
 
     useEffect(() => {
+        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
+            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
+        }
+
         async function getConfig() {
             setConfig(await fetch('/config.json').then((res) => res.json()));
         }
@@ -23,14 +29,10 @@ function CategoryIndex() {
     async function getCategories() {
         const response = await fetch(`${config.API_URL}/api/v1/Category`, {
             headers: {
-                // "Accept": "application/json",
-                // "Content-Type": "multipart/form-data",
-                // "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + accessToken,
             },
         });
 
-        // console.log(response);
-        // console.log(await response.json());
         setCategories(await response.json());
     }
 
@@ -38,9 +40,7 @@ function CategoryIndex() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "DELETE",
             headers: {
-                // "Accept": "application/json",
-                // "Content-Type": "multipart/form-data",
-                // "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + accessToken,
             },
         });
 

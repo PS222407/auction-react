@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link, useParams} from "react-router-dom";
+import dayjs from "dayjs";
 
 function ProductEdit() {
     const {id} = useParams();
     const [config, setConfig] = useState("");
+    const [accessToken, setAccessToken] = useState();
     const [productForm, setProductForm] = useState({
         name: '',
         description: '',
@@ -13,6 +15,10 @@ function ProductEdit() {
     });
 
     useEffect(() => {
+        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
+            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
+        }
+
         async function getConfig() {
             setConfig(await fetch('/config.json').then((res) => res.json()));
         }
@@ -29,9 +35,7 @@ function ProductEdit() {
     async function getProducts() {
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             headers: {
-                // "Accept": "application/json",
-                // "Content-Type": "multipart/form-data",
-                // "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + accessToken,
             },
         });
 
@@ -68,9 +72,7 @@ function ProductEdit() {
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "PUT",
             headers: {
-                // "Accept": "application/json",
-                // "Content-Type": "multipart/form-data",
-                // "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + accessToken,
             },
             body: formData,
         });

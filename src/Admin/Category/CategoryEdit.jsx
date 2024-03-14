@@ -1,15 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link, useParams} from "react-router-dom";
+import dayjs from "dayjs";
 
 function CategoryEdit() {
     const {id} = useParams();
     const [config, setConfig] = useState("");
+    const [accessToken, setAccessToken] = useState();
     const [categoryForm, setCategoryForm] = useState({
         name: '',
     });
 
     useEffect(() => {
+        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
+            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
+        }
+
         async function getConfig() {
             setConfig(await fetch('/config.json').then((res) => res.json()));
         }
@@ -26,9 +32,7 @@ function CategoryEdit() {
     async function getCategorys() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             headers: {
-                // "Accept": "application/json",
-                // "Content-Type": "multipart/form-data",
-                // "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + accessToken,
             },
         });
 
@@ -55,18 +59,11 @@ function CategoryEdit() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "PUT",
             headers: {
-                // "Accept": "application/json",
-                // "Content-Type": "multipart/form-data",
-                // "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + accessToken,
             },
             body: JSON.stringify(categoryForm),
         });
-
-        console.log(response);
-        console.log(await response.json());
     }
-
-    console.log(categoryForm)
     
     return (
         <>
