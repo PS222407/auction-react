@@ -28,24 +28,28 @@ function AdminNav() {
                             <div className="flex items-center ms-3">
                                 <div>
                                     <button type="button"
-                                            className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                                            className="flex text-sm"
                                             aria-expanded="false" data-dropdown-toggle="dropdown-user">
                                         <span className="sr-only">Open user menu</span>
-                                        <img className="w-8 h-8 rounded-full"
-                                             src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                                             alt="user photo"/>
+                                        <div className={"w-5"}>
+                                            <svg fill={"black"} xmlns="http://www.w3.org/2000/svg"
+                                                 viewBox="0 0 448 512">
+                                                <path
+                                                    d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+                                            </svg>
+                                        </div>
                                     </button>
                                 </div>
                                 <div
                                     className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
                                     id="dropdown-user">
                                     <div className="px-4 py-3" role="none">
-                                        <p className="text-sm text-gray-900 dark:text-white" role="none">
+                                    <p className="text-sm text-gray-900 dark:text-white" role="none">
                                             Neil Sims
                                         </p>
                                         <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                                            role="none">
-                                            neil.sims@flowbite.com
+                                            neil.sims@jdsklf.com
                                         </p>
                                     </div>
                                     <ul className="py-1" role="none">
