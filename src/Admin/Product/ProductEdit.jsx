@@ -1,25 +1,48 @@
 import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
-import {initTWE, Input, Ripple} from "tw-elements";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
-function ProductCreate() {
+function ProductEdit() {
+    const {id} = useParams();
     const [config, setConfig] = useState("");
     const [productForm, setProductForm] = useState({
         name: '',
         description: '',
-        image: ''
+        image: '',
+        imageUrl: ''
     });
 
     useEffect(() => {
-        initTWE({Input, Ripple});
-
         async function getConfig() {
             setConfig(await fetch('/config.json').then((res) => res.json()));
         }
 
         getConfig();
     }, []);
+
+    useEffect(() => {
+        if (config) {
+            getProducts();
+        }
+    }, [config]);
+
+    async function getProducts() {
+        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
+            headers: {
+                // "Accept": "application/json",
+                // "Content-Type": "multipart/form-data",
+                // "Authorization": "Bearer " + accessToken,
+            },
+        });
+
+        const productFromApi = await response.json();
+        setProductForm(productFromApi);
+        setProductForm({
+            name: productFromApi.name,
+            description: productFromApi.description,
+            imageUrl: productFromApi.imageUrl
+        })
+    }
 
     function handleFormChange(value, name) {
         setProductForm(prevState => ({
@@ -31,10 +54,10 @@ function ProductCreate() {
     async function handleSubmitProduct(e) {
         e.preventDefault();
 
-        await postCreateProduct();
+        await postEditProduct();
     }
 
-    async function postCreateProduct() {
+    async function postEditProduct() {
         const formData = new FormData();
 
         productForm.name && formData.append('Name', productForm.name);
@@ -43,8 +66,8 @@ function ProductCreate() {
 
         console.log(productForm)
 
-        const response = await fetch(`${config.API_URL}/api/v1/Product`, {
-            method: "POST",
+        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
+            method: "PUT",
             headers: {
                 // "Accept": "application/json",
                 // "Content-Type": "multipart/form-data",
@@ -57,13 +80,15 @@ function ProductCreate() {
         console.log(await response.json());
     }
 
+    console.log(productForm)
+
     return (
         <>
             <AdminNav/>
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
-                    <h1 className={"text-4xl font-bold text-black"}>Create product</h1>
+                    <h1 className={"text-4xl font-bold text-black"}>Edit product</h1>
 
                     <br/>
 
@@ -80,6 +105,7 @@ function ProductCreate() {
                         <div className={"flex flex-col"}>
                             <label htmlFor="name">Name</label>
                             <input
+                                value={productForm.name}
                                 type={"text"}
                                 id={"name"}
                                 name={"name"}
@@ -88,8 +114,8 @@ function ProductCreate() {
                         </div>
                         <div className={"flex flex-col"}>
                             <label htmlFor="description">Description</label>
-                            <input
-                                type={"text"}
+                            <textarea
+                                defaultValue={productForm.description}
                                 id={"description"}
                                 name={"description"}
                                 onChange={(e) => handleFormChange(e.target.value, "description")}
@@ -116,4 +142,4 @@ function ProductCreate() {
     );
 }
 
-export default ProductCreate;
+export default ProductEdit;

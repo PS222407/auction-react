@@ -8,6 +8,11 @@ import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import AdminPage from "./Admin/AdminPage.jsx";
 import ProductCreate from "./Admin/Product/ProductCreate.jsx";
+import ProductIndex from "./Admin/Product/ProductIndex.jsx";
+import ProductEdit from "./Admin/Product/ProductEdit.jsx";
+import CategoryIndex from "./Admin/Category/CategoryIndex.jsx";
+import CategroyCreate from "./Admin/Category/CategroyCreate.jsx";
+import CategoryEdit from "./Admin/Category/CategoryEdit.jsx";
 
 function App() {
     return (
@@ -21,7 +26,12 @@ function App() {
                 <Route path="/products/:id" element={<ProductPage/>}/>
 
                 <Route path="/admin" element={<AdminPage/>}/>
+                <Route path="/admin/products" element={<ProductIndex/>}/>
                 <Route path="/admin/products/create" element={<ProductCreate/>}/>
+                <Route path="/admin/products/:id/edit" element={<ProductEdit/>}/>
+                <Route path="/admin/categories" element={<CategoryIndex/>}/>
+                <Route path="/admin/categories/create" element={<CategroyCreate/>}/>
+                <Route path="/admin/categories/:id/edit" element={<CategoryEdit/>}/>
             </Routes>
         </BrowserRouter>
     )
