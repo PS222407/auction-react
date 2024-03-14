@@ -36,7 +36,6 @@ function ProductEdit() {
         });
 
         const productFromApi = await response.json();
-        setProductForm(productFromApi);
         setProductForm({
             name: productFromApi.name,
             description: productFromApi.description,
