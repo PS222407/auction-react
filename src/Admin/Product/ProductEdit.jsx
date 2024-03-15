@@ -34,7 +34,7 @@ function ProductEdit() {
 
     useEffect(() => {
         if (config) {
-            getProducts();
+            getProduct();
             getCategories();
         }
     }, [config]);
@@ -53,7 +53,7 @@ function ProductEdit() {
         }
     }
 
-    async function getProducts() {
+    async function getProduct() {
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
