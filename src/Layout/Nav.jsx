@@ -2,12 +2,20 @@ import React, {useEffect, useState} from 'react';
 
 import {Collapse, Dropdown, initTWE} from "tw-elements";
 import {Link} from "react-router-dom";
+import dayjs from "dayjs";
 
 function Nav() {
     const [config, setConfig] = useState("");
+    const [accessToken, setAccessToken] = useState("");
+    const [isAuthorized, setIsAuthorized] = useState(null);
+    const [roles, setRoles] = useState();
 
     useEffect(() => {
         initTWE({Collapse, Dropdown});
+
+        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
+            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
+        }
 
         async function getConfig() {
             setConfig(await fetch('/config.json').then((res) => res.json()));
@@ -15,6 +23,20 @@ function Nav() {
 
         getConfig();
     }, []);
+
+    useEffect(() => {
+        if (config) getUserInfo();
+    }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+
+        setIsAuthorized(response.status === 200);
+
+        if (response.status === 200) {
+            setRoles(await response.json());
+        }
+    }
 
     return (
         <>
@@ -97,11 +119,6 @@ function Nav() {
                                 </button>
                             </div>
                         </div>
-                        <div>
-                            {
-                                !!localStorage.getItem('auth') ? 'true' : 'false'
-                            }
-                        </div>
                         <a className="me-4 text-neutral-600 dark:text-white" href="#">
                             <span className="[&>svg]:w-8">
                               <svg
@@ -137,33 +154,53 @@ function Nav() {
                                 className="w-32 absolute z-[1000] float-left m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg data-[twe-dropdown-show]:block dark:bg-surface-dark"
                                 aria-labelledby="dropdownMenuButton2"
                                 data-twe-dropdown-menu-ref="">
-                                <li>
-                                    <Link
-                                        className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                        to="/login"
-                                        data-twe-dropdown-item-ref="">
-                                        Login
-                                    </Link>
-                                </li>
-                                <li>
-                                    <a className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                        href="/register"
-                                        data-twe-dropdown-item-ref="">
-                                        Register
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                        href="/account"
-                                        data-twe-dropdown-item-ref="">
-                                        Account
-                                    </a>
-                                </li>
+                                {
+                                    isAuthorized === false  &&
+                                    <>
+                                        <li>
+                                            <Link
+                                                className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                                to="/login"
+                                                data-twe-dropdown-item-ref="">
+                                                Login
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <a className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                               href="/register"
+                                               data-twe-dropdown-item-ref="">
+                                                Register
+                                            </a>
+                                        </li>
+                                    </>
+                                }
+                                {
+                                    isAuthorized === true &&
+                                    <li>
+                                        <a className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                           href="/account"
+                                           data-twe-dropdown-item-ref="">
+                                            Account
+                                        </a>
+                                    </li>
+                                }
+                                {
+                                    roles && roles.includes("Admin") &&
+                                    <li>
+                                        <Link
+                                            className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                            to="/admin"
+                                            data-twe-dropdown-item-ref="">
+                                        Admin
+                                        </Link>
+                                    </li>
+                                }
                                 <li>
                                     <a onClick={() => {
                                         localStorage.removeItem("auth");
                                         window.location.reload();
-                                    }} className="block cursor-pointer w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                    }}
+                                       className="block cursor-pointer w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
                                        data-twe-dropdown-item-ref="">
                                         Logout
                                     </a>

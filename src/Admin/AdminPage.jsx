@@ -1,12 +1,36 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import dayjs from "dayjs";
 import AdminNav from "./AdminNav.jsx";
 
 function AdminPage() {
+    const [accessToken, setAccessToken] = useState("");
+    const [config, setConfig] = useState("");
+    const [isAuthorized, setIsAuthorized] = useState(null);
+
     useEffect(() => {
-        const token = (!!localStorage.getItem("auth") && (dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs())) ? JSON.parse(localStorage.getItem("auth")).accessToken : null;
-        console.log(token)
+        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
+            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
+        }
+
+        async function getConfig() {
+            setConfig(await fetch('/config.json').then((res) => res.json()));
+        }
+
+        getConfig();
     }, []);
+
+    useEffect(() => {
+        if (config) getUserInfo();
+    }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
+
+    if (isAuthorized === false) {
+        return <div>Unauthorized request</div>
+    }
 
     return (
         <>

@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
+import dayjs from "dayjs";
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
-import dayjs from "dayjs";
 
-function CategoryIndex() {
+function AuctionIndex() {
     const [config, setConfig] = useState("");
-    const [categories, setCategories] = useState([]);
+    const [auctions, setAuctions] = useState([]);
     const [accessToken, setAccessToken] = useState();
     const [isAuthorized, setIsAuthorized] = useState(null);
 
@@ -22,27 +22,25 @@ function CategoryIndex() {
     }, []);
 
     useEffect(() => {
-        if (config) {
-            getCategories();
-        }
+        if (config) getAuctions();
     }, [config]);
 
-    async function getCategories() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category`, {
+    async function getAuctions() {
+        const response = await fetch(`${config.API_URL}/api/v1/Auction`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
             },
         });
 
         if (response.status === 200) {
-            setCategories(await response.json());
+            setAuctions(await response.json());
         } else if (response.status === 401) {
             setIsAuthorized(false);
         }
     }
 
-    async function handleDeleteCategory(id) {
-        const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
+    async function handleDeleteAuction(id) {
+        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + accessToken,
@@ -50,7 +48,7 @@ function CategoryIndex() {
         });
 
         if (response.status === 200) {
-            await getCategories();
+            await getAuctions();
         }
     }
 
@@ -60,18 +58,19 @@ function CategoryIndex() {
 
     return (
         <>
+
             <AdminNav/>
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
-                    <h1 className={"text-4xl font-bold text-black"}>Categories</h1>
+                    <h1 className={"text-4xl font-bold text-black"}>Auctions</h1>
 
                     <br/>
 
                     <div>
-                        <Link to={"/admin/categories/create"}
+                        <Link to={"/admin/auctions/create"}
                               className={"w-fit bg-blue-500 py-2 px-6 text-white block rounded"}>
-                            Create New Category
+                            Create New
                         </Link>
                     </div>
 
@@ -80,24 +79,28 @@ function CategoryIndex() {
                     <table>
                         <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Product Name</th>
+                            <th>Start Date Time</th>
+                            <th>Duration</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         {
-                            categories.map((category) => {
+                            auctions.map((auction) => {
                                 return (
-                                    <tr key={category.id}>
+                                    <tr key={auction.id}>
                                         <td>
-                                            <Link to={`/admin/categories/${category.id}/edit`}
+                                            <Link to={`/admin/auctions/${auction.id}/edit`}
                                                   className={"hover:underline cursor-pointer"}>
-                                                {category.name}
+                                                {auction.product.name}
                                             </Link>
                                         </td>
+                                        <td>{dayjs(auction.startDateTime).format("D MMMM YYYY HH:mm")}</td>
+                                        <td>{auction.durationInSeconds}</td>
                                         <td>
                                             <div className={"flex justify-around"}>
-                                                <Link to={`/admin/categories/${category.id}/edit`}
+                                                <Link to={`/admin/auctions/${auction.id}/edit`}
                                                       className={"w-4 cursor-pointer"}>
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                          viewBox="0 0 512 512">
@@ -106,7 +109,7 @@ function CategoryIndex() {
                                                     </svg>
                                                 </Link>
                                                 <button
-                                                    onClick={() => confirm("Are you sure you want to delete? Category id:" + category.id) && handleDeleteCategory(category.id)}
+                                                    onClick={() => confirm("Are you sure you want to delete? id:" + auction.id) && handleDeleteAuction(auction.id)}
                                                     className={"w-4 cursor-pointer"}>
                                                     <svg className={"block"} xmlns="http://www.w3.org/2000/svg"
                                                          viewBox="0 0 448 512">
@@ -128,4 +131,4 @@ function CategoryIndex() {
     );
 }
 
-export default CategoryIndex;
+export default AuctionIndex;

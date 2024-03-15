@@ -1,7 +1,10 @@
 import React from 'react';
 import {Link} from "react-router-dom";
+import {initFlowbite} from "flowbite";
 
 function AdminNav() {
+    initFlowbite();
+
     return (
         <>
             <nav
@@ -43,35 +46,28 @@ function AdminNav() {
                                 <div
                                     className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
                                     id="dropdown-user">
-                                    <div className="px-4 py-3" role="none">
-                                    <p className="text-sm text-gray-900 dark:text-white" role="none">
-                                            Neil Sims
-                                        </p>
-                                        <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
-                                           role="none">
-                                            neil.sims@jdsklf.com
-                                        </p>
-                                    </div>
+                                    {/*<div className="px-4 py-3" role="none">*/}
+                                    {/*    <p className="text-sm text-gray-900 dark:text-white" role="none">*/}
+                                    {/*        Neil Sims*/}
+                                    {/*    </p>*/}
+                                    {/*    <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"*/}
+                                    {/*       role="none">*/}
+                                    {/*        neil.sims@jdsklf.com*/}
+                                    {/*    </p>*/}
+                                    {/*</div>*/}
                                     <ul className="py-1" role="none">
                                         <li>
-                                            <a href="#"
+                                            <a href="/"
                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                               role="menuitem">Dashboard</a>
+                                               role="menuitem">Homepage</a>
                                         </li>
                                         <li>
-                                            <a href="#"
-                                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                               role="menuitem">Settings</a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                               role="menuitem">Earnings</a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                               role="menuitem">Sign out</a>
+                                            <a onClick={() => {
+                                                localStorage.removeItem("auth");
+                                                window.location.reload();
+                                            }}
+                                               className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                               role="menuitem">Logout</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -88,7 +84,7 @@ function AdminNav() {
                     <ul className="space-y-2 font-medium">
                         <li>
                             <Link to="/admin/products"
-                               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <div className={"w-6"}>
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          viewBox="0 0 640 512">
@@ -101,7 +97,7 @@ function AdminNav() {
                         </li>
                         <li>
                             <Link to="/admin/categories"
-                               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <div className={"w-6"}>
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          viewBox="0 0 576 512">
@@ -110,6 +106,19 @@ function AdminNav() {
                                     </svg>
                                 </div>
                                 <span className="ms-3">Categories</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/admin/auctions"
+                                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                                <div className={"w-6"}>
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 512 512">
+                                        <path
+                                            d="M318.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-120 120c-12.5 12.5-12.5 32.8 0 45.3l16 16c12.5 12.5 32.8 12.5 45.3 0l4-4L325.4 293.4l-4 4c-12.5 12.5-12.5 32.8 0 45.3l16 16c12.5 12.5 32.8 12.5 45.3 0l120-120c12.5-12.5 12.5-32.8 0-45.3l-16-16c-12.5-12.5-32.8-12.5-45.3 0l-4 4L330.6 74.6l4-4c12.5-12.5 12.5-32.8 0-45.3l-16-16zm-152 288c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l48 48c12.5 12.5 32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-1.4-1.4L272 285.3 226.7 240 168 298.7l-1.4-1.4z"/>
+                                    </svg>
+                                </div>
+                                <span className="ms-3">Auctions</span>
                             </Link>
                         </li>
                     </ul>

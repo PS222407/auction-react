@@ -7,6 +7,7 @@ function ProductIndex() {
     const [config, setConfig] = useState("");
     const [products, setProducts] = useState([]);
     const [accessToken, setAccessToken] = useState();
+    const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -21,9 +22,7 @@ function ProductIndex() {
     }, []);
 
     useEffect(() => {
-        if (config) {
-            getProducts();
-        }
+        if (config) getProducts();
     }, [config]);
 
     async function getProducts() {
@@ -33,7 +32,11 @@ function ProductIndex() {
             },
         });
 
-        setProducts(await response.json());
+        if (response.status === 200) {
+            setProducts(await response.json());
+        } else if (response.status === 401) {
+            setIsAuthorized(false);
+        }
     }
 
     async function handleDeleteProduct(id) {
@@ -47,6 +50,10 @@ function ProductIndex() {
         if (response.status === 200) {
             await getProducts();
         }
+    }
+
+    if (isAuthorized === false) {
+        return <div>Unauthorized request</div>
     }
 
     return (
@@ -104,7 +111,7 @@ function ProductIndex() {
                                                     </svg>
                                                 </Link>
                                                 <button
-                                                    onClick={() => confirm(product.id) && handleDeleteProduct(product.id)}
+                                                    onClick={() => confirm("Are you sure you want to delete? Product id:" + product.id) && handleDeleteProduct(product.id)}
                                                     className={"w-4 cursor-pointer"}>
                                                     <svg className={"block"} xmlns="http://www.w3.org/2000/svg"
                                                          viewBox="0 0 448 512">
