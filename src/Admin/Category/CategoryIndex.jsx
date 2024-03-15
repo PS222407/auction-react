@@ -7,6 +7,7 @@ function CategoryIndex() {
     const [config, setConfig] = useState("");
     const [categories, setCategories] = useState([]);
     const [accessToken, setAccessToken] = useState();
+    const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -33,7 +34,11 @@ function CategoryIndex() {
             },
         });
 
-        setCategories(await response.json());
+        if (response.status === 200) {
+            setCategories(await response.json());
+        } else if (response.status === 401) {
+            setIsAuthorized(false);
+        }
     }
 
     async function handleDeleteCategory(id) {
@@ -48,7 +53,11 @@ function CategoryIndex() {
             await getCategories();
         }
     }
-    
+
+    if (isAuthorized === false) {
+        return <div>Unauthorized request</div>
+    }
+
     return (
         <>
             <AdminNav/>

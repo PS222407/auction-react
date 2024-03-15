@@ -7,6 +7,7 @@ function ProductIndex() {
     const [config, setConfig] = useState("");
     const [products, setProducts] = useState([]);
     const [accessToken, setAccessToken] = useState();
+    const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -21,9 +22,7 @@ function ProductIndex() {
     }, []);
 
     useEffect(() => {
-        if (config) {
-            getProducts();
-        }
+        if (config) getProducts();
     }, [config]);
 
     async function getProducts() {
@@ -33,7 +32,11 @@ function ProductIndex() {
             },
         });
 
-        setProducts(await response.json());
+        if (response.status === 200) {
+            setProducts(await response.json());
+        } else if (response.status === 401) {
+            setIsAuthorized(false);
+        }
     }
 
     async function handleDeleteProduct(id) {
@@ -47,6 +50,10 @@ function ProductIndex() {
         if (response.status === 200) {
             await getProducts();
         }
+    }
+
+    if (isAuthorized === false) {
+        return <div>Unauthorized request</div>
     }
 
     return (

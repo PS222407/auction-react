@@ -1,17 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import dayjs from "dayjs";
+import {toast} from "react-toastify";
 
 function ProductEdit() {
+    const navigate = useNavigate();
     const {id} = useParams();
     const [config, setConfig] = useState("");
+    const [errors, setErrors] = useState([]);
     const [accessToken, setAccessToken] = useState();
+    const [categories, setCategories] = useState([]);
+    const [isAuthorized, setIsAuthorized] = useState(null);
     const [productForm, setProductForm] = useState({
         name: '',
         description: '',
         image: '',
-        imageUrl: ''
+        imageUrl: '',
+        category: null,
     });
 
     useEffect(() => {
@@ -29,8 +35,23 @@ function ProductEdit() {
     useEffect(() => {
         if (config) {
             getProducts();
+            getCategories();
         }
     }, [config]);
+
+    async function getCategories() {
+        const response = await fetch(`${config.API_URL}/api/v1/Category`, {
+            headers: {
+                "Authorization": "Bearer " + accessToken,
+            },
+        });
+
+        if (response.status === 200) {
+            setCategories(await response.json());
+        } else if (response.status === 401) {
+            setIsAuthorized(false);
+        }
+    }
 
     async function getProducts() {
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
@@ -43,7 +64,8 @@ function ProductEdit() {
         setProductForm({
             name: productFromApi.name,
             description: productFromApi.description,
-            imageUrl: productFromApi.imageUrl
+            imageUrl: productFromApi.imageUrl,
+            category: productFromApi.categoryId,
         })
     }
 
@@ -66,8 +88,7 @@ function ProductEdit() {
         productForm.name && formData.append('Name', productForm.name);
         productForm.description && formData.append('Description', productForm.description);
         productForm.image && formData.append('Image', productForm.image);
-
-        console.log(productForm)
+        productForm.category && formData.append('CategoryId', productForm.category);
 
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "PUT",
@@ -77,11 +98,29 @@ function ProductEdit() {
             body: formData,
         });
 
-        console.log(response);
-        console.log(await response.json());
+        if (response.status === 200) {
+            toast("Updated product successfully", {
+                type: "success",
+            });
+
+            return navigate("/admin/products");
+        } else if (response.status === 401) {
+            toast("Unauthorized", {
+                type: "error",
+            })
+        } else if (response.status === 400) {
+            const data = await response.json();
+            setErrors(Object.values(data.errors))
+
+            toast("Validation error", {
+                type: "error",
+            })
+        }
     }
 
-    console.log(productForm)
+    if (isAuthorized === false) {
+        return <div>Unauthorized request</div>
+    }
 
     return (
         <>
@@ -90,6 +129,12 @@ function ProductEdit() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 className={"text-4xl font-bold text-black"}>Edit product</h1>
+
+                    {
+                        errors && errors.map((error, index) => {
+                            return <p key={index} className={"text-red-500"}>{error[0]}</p>
+                        })
+                    }
 
                     <br/>
 
@@ -130,6 +175,20 @@ function ProductEdit() {
                                 name={"image"}
                                 onChange={(e) => handleFormChange(e.target.files[0] ?? null, "image")}
                             />
+                        </div>
+                        <div className={"flex flex-col"}>
+                            <label htmlFor="category">category</label>
+                            <select name="category" id="category"
+                                    onChange={(e) => handleFormChange(e.target.value, "category")}>
+                                <option value="" disabled selected={productForm.category === null}>Select your option
+                                </option>
+                                {
+                                    categories.map((category) => {
+                                        return <option selected={category.id === productForm.category} key={category.id}
+                                                       value={category.id}>{category.name}</option>
+                                    })
+                                }
+                            </select>
                         </div>
                         <div>
                             <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}

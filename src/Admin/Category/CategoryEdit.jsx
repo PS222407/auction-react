@@ -7,6 +7,7 @@ function CategoryEdit() {
     const {id} = useParams();
     const [config, setConfig] = useState("");
     const [accessToken, setAccessToken] = useState();
+    const [isAuthorized, setIsAuthorized] = useState(null);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
     });
@@ -25,21 +26,25 @@ function CategoryEdit() {
 
     useEffect(() => {
         if (config) {
-            getCategorys();
+            getCategories();
         }
     }, [config]);
 
-    async function getCategorys() {
+    async function getCategories() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
             },
         });
 
-        const categoryFromApi = await response.json();
-        setCategoryForm({
-            name: categoryFromApi.name,
-        })
+        if (response.status === 200) {
+            const categoryFromApi = await response.json();
+            setCategoryForm({
+                name: categoryFromApi.name,
+            })
+        } else if (response.status === 401) {
+            setIsAuthorized(false);
+        }
     }
 
     function handleFormChange(value, name) {
@@ -64,7 +69,11 @@ function CategoryEdit() {
             body: JSON.stringify(categoryForm),
         });
     }
-    
+
+    if (isAuthorized === false) {
+        return <div>Unauthorized request</div>
+    }
+
     return (
         <>
             <AdminNav/>

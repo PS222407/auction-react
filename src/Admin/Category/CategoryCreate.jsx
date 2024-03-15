@@ -3,9 +3,10 @@ import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
 import dayjs from "dayjs";
 
-function CategroyCreate() {
+function CategoryCreate() {
     const [config, setConfig] = useState("");
     const [accessToken, setAccessToken] = useState();
+    const [isAuthorized, setIsAuthorized] = useState(null);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
     });
@@ -21,6 +22,15 @@ function CategroyCreate() {
 
         getConfig();
     }, []);
+
+    useEffect(() => {
+        if (config) getUserInfo();
+    }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     function handleFormChange(value, name) {
         setCategoryForm(prevState => ({
@@ -39,10 +49,15 @@ function CategroyCreate() {
         const response = await fetch(`${config.API_URL}/api/v1/Category`, {
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "Authorization": "Bearer " + accessToken,
             },
             body: JSON.stringify(categoryForm),
         });
+    }
+
+    if (isAuthorized === false) {
+        return <div>Unauthorized request</div>
     }
 
     return (
@@ -87,4 +102,4 @@ function CategroyCreate() {
     );
 }
 
-export default CategroyCreate;
+export default CategoryCreate;
