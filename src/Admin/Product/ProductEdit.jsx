@@ -99,7 +99,7 @@ function ProductEdit() {
         });
 
         if (response.status === 200) {
-            toast("Updated product successfully", {
+            toast("Updated successfully", {
                 type: "success",
             });
 

@@ -106,7 +106,7 @@ function CategoryIndex() {
                                                     </svg>
                                                 </Link>
                                                 <button
-                                                    onClick={() => confirm(category.id) && handleDeleteCategory(category.id)}
+                                                    onClick={() => confirm("Are you sure you want to delete? Category id:" + category.id) && handleDeleteCategory(category.id)}
                                                     className={"w-4 cursor-pointer"}>
                                                     <svg className={"block"} xmlns="http://www.w3.org/2000/svg"
                                                          viewBox="0 0 448 512">

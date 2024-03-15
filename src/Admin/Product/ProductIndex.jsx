@@ -111,7 +111,7 @@ function ProductIndex() {
                                                     </svg>
                                                 </Link>
                                                 <button
-                                                    onClick={() => confirm(product.id) && handleDeleteProduct(product.id)}
+                                                    onClick={() => confirm("Are you sure you want to delete? Product id:" + product.id) && handleDeleteProduct(product.id)}
                                                     className={"w-4 cursor-pointer"}>
                                                     <svg className={"block"} xmlns="http://www.w3.org/2000/svg"
                                                          viewBox="0 0 448 512">

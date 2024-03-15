@@ -80,7 +80,7 @@ function ProductCreate() {
         });
 
         if (response.status === 200) {
-            toast("Created product successfully", {
+            toast("Created successfully", {
                 type: "success",
             });
 
