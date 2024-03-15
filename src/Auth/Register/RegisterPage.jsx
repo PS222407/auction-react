@@ -30,7 +30,9 @@ function RegisterPage() {
         }));
     }
 
-    async function handleRegister() {
+    async function handleRegister(e) {
+        e.preventDefault();
+
         if (registerFormData.password !== registerFormData.confirmPassword) {
             alert("Passwords do not match");
         }
@@ -73,7 +75,7 @@ function RegisterPage() {
                         </div>
 
                         <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
-                            <form>
+                            <form onSubmit={handleRegister}>
                                 <h1 className="mb-6 text-2xl font-bold text-center lg:text-left">Register</h1>
 
                                 <div className="relative mb-6" data-twe-input-wrapper-init="">
@@ -119,8 +121,6 @@ function RegisterPage() {
 
                                 <div className="text-center lg:text-left">
                                     <button
-                                        onClick={handleRegister}
-                                        type="button"
                                         className="inline-block w-full rounded bg-primary px-7 pb-2 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
                                         data-twe-ripple-init=""
                                         data-twe-ripple-color="light">

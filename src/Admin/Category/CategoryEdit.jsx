@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import dayjs from "dayjs";
+import {toast} from "react-toastify";
 
 function CategoryEdit() {
+    const navigate = useNavigate();
     const {id} = useParams();
     const [config, setConfig] = useState("");
     const [accessToken, setAccessToken] = useState();
@@ -41,6 +43,7 @@ function CategoryEdit() {
             const categoryFromApi = await response.json();
             setCategoryForm({
                 name: categoryFromApi.name,
+                icon: categoryFromApi.icon,
             })
         } else if (response.status === 401) {
             setIsAuthorized(false);
@@ -64,10 +67,21 @@ function CategoryEdit() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "PUT",
             headers: {
+                "Content-Type": "application/json",
                 "Authorization": "Bearer " + accessToken,
             },
             body: JSON.stringify(categoryForm),
         });
+
+        if (response.status === 200) {
+            toast("Updated successfully", {
+                type: "success",
+            });
+
+            return navigate("/admin/categories");
+        } else if (response.status === 401) {
+            setIsAuthorized(false);
+        }
     }
 
     if (isAuthorized === false) {
@@ -102,6 +116,15 @@ function CategoryEdit() {
                                 id={"name"}
                                 name={"name"}
                                 onChange={(e) => handleFormChange(e.target.value, "name")}
+                            />
+                        </div>
+                        <div className={"flex flex-col"}>
+                            <label htmlFor="name">Icon (svg from fontawesome e.g.)</label>
+                            <textarea
+                                value={categoryForm.icon}
+                                id={"name"}
+                                name={"name"}
+                                onChange={(e) => handleFormChange(e.target.value, "icon")}
                             />
                         </div>
                         <div>

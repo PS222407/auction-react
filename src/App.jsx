@@ -13,6 +13,9 @@ import ProductEdit from "./Admin/Product/ProductEdit.jsx";
 import CategoryIndex from "./Admin/Category/CategoryIndex.jsx";
 import CategoryCreate from "./Admin/Category/CategoryCreate.jsx";
 import CategoryEdit from "./Admin/Category/CategoryEdit.jsx";
+import AuctionIndex from "./Admin/Auction/AuctionIndex.jsx";
+import AuctionEdit from "./Admin/Auction/AuctionEdit.jsx";
+import AuctionCreate from "./Admin/Auction/AuctionCreate.jsx";
 
 function App() {
     return (
@@ -25,13 +28,20 @@ function App() {
                 <Route path="/categories/:id" element={<CategoryPage/>}/>
                 <Route path="/products/:id" element={<ProductPage/>}/>
 
+                {/*ADMIN*/}
                 <Route path="/admin" element={<AdminPage/>}/>
+
                 <Route path="/admin/products" element={<ProductIndex/>}/>
                 <Route path="/admin/products/create" element={<ProductCreate/>}/>
                 <Route path="/admin/products/:id/edit" element={<ProductEdit/>}/>
+
                 <Route path="/admin/categories" element={<CategoryIndex/>}/>
                 <Route path="/admin/categories/create" element={<CategoryCreate/>}/>
                 <Route path="/admin/categories/:id/edit" element={<CategoryEdit/>}/>
+
+                <Route path="/admin/auctions" element={<AuctionIndex/>}/>
+                <Route path="/admin/auctions/create" element={<AuctionCreate/>}/>
+                <Route path="/admin/auctions/:id/edit" element={<AuctionEdit/>}/>
             </Routes>
         </BrowserRouter>
     )
