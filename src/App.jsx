@@ -1,4 +1,4 @@
-import HomePage from "./Home/HomePage.jsx";
+import HomePage from "./HomePage.jsx";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import CategoryPage from "./Category/CategoryPage.jsx";
 import ProductPage from "./Product/ProductPage.jsx";

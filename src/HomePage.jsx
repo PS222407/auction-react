@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import Nav from "../Layout/Nav.jsx";
-import Category from "../Category.jsx";
+import Nav from "./Layout/Nav.jsx";
+import Category from "./Category.jsx";
 
 function HomePage() {
     const [config, setConfig] = useState("");

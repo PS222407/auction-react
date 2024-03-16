@@ -5,6 +5,8 @@ import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration';
 import Countdown from "react-countdown";
 import InputMoney from "../Components/Inputs/InputMoney.jsx";
+import MoneyTransformer from "../Services/MoneyTransformer.js";
+import {toast} from "react-toastify";
 
 function AuctionPage() {
     const {id} = useParams();
@@ -69,12 +71,22 @@ function AuctionPage() {
             },
             body: JSON.stringify({
                 auctionId: auction.id,
-                priceInCents: Number(price.replace(",", "")),
+                priceInCents: (new MoneyTransformer()).moneyDB(price),
             }),
         });
 
         if (response.status === 200) {
             await getAuction();
+
+            toast("Updated successfully", {
+                type: "success",
+                position: "bottom-right"
+            });
+        } else if (response.status === 400) {
+            toast("Bid is too low", {
+                type: "error",
+                position: "bottom-right"
+            });
         }
     }
 

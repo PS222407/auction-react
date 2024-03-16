@@ -8,6 +8,7 @@ function Nav() {
     const [config, setConfig] = useState("");
     const [accessToken, setAccessToken] = useState("");
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [categories, setCategories] = useState();
     const [roles, setRoles] = useState();
 
     useEffect(() => {
@@ -25,8 +26,19 @@ function Nav() {
     }, []);
 
     useEffect(() => {
-        if (config) getUserInfo();
+        if (config) {
+            getUserInfo();
+            getCategories();
+        }
     }, [config]);
+
+    async function getCategories() {
+        const response = await fetch(`${config.API_URL}/api/v1/Category`);
+
+        if (response.status === 200) {
+            setCategories(await response.json());
+        }
+    }
 
     async function getUserInfo() {
         const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
@@ -74,30 +86,17 @@ function Nav() {
                         <ul
                             className="list-style-none me-auto flex flex-col ps-0 lg:flex-row"
                             data-twe-navbar-nav-ref="">
-                            {/*<li className="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref="">*/}
-                            {/*    <a*/}
-                            {/*        className="text-white transition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"*/}
-                            {/*        href="#"*/}
-                            {/*        data-twe-nav-link-ref=""*/}
-                            {/*    >Dashboard</a*/}
-                            {/*    >*/}
-                            {/*</li>*/}
-                            {/*<li className="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref="">*/}
-                            {/*    <a*/}
-                            {/*        className="text-white transition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"*/}
-                            {/*        href="#"*/}
-                            {/*        data-twe-nav-link-ref=""*/}
-                            {/*    >Team</a*/}
-                            {/*    >*/}
-                            {/*</li>*/}
-                            {/*<li className="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref="">*/}
-                            {/*    <a*/}
-                            {/*        className="text-white transition duration-200 hover:text-black/80 hover:ease-in-out focus:text-black/80 active:text-black/80 motion-reduce:transition-none dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2"*/}
-                            {/*        href="#"*/}
-                            {/*        data-twe-nav-link-ref=""*/}
-                            {/*    >Projects</a*/}
-                            {/*    >*/}
-                            {/*</li>*/}
+                            {
+                                categories && categories.map((category) => {
+                                    return (
+                                        <li key={category.id} className="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref="">
+                                            <a href={`/categories/${category.id}`} className="text-white hover:text-black/80 focus:text-black/80 active:text-black/80 dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2">
+                                                {category.name}
+                                            </a>
+                                        </li>
+                                    );
+                                })
+                            }
                         </ul>
                     </div>
 
@@ -106,12 +105,12 @@ function Nav() {
                             <div className="relative flex w-full flex-wrap items-stretch">
                                 <input
                                     type="search"
-                                    className="bg-white relative m-0 -me-0.5 block w-[1px] min-w-0 flex-auto rounded-s border border-secondary-500 bg-transparent bg-clip-padding px-3 py-1 text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out focus:z-[3] focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:bg-body-dark dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill"
+                                    className="bg-white relative m-0 -me-0.5 block w-[1px] min-w-0 flex-auto rounded-s border border-secondary-500 bg-transparent bg-clip-padding px-3 py-1 text-base font-normal leading-[1.6] text-surface outline-none focus:z-[3] focus:outline-none dark:border-white/10 dark:bg-body-dark dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill"
                                     placeholder="Search"
                                     aria-label="Search"
                                     aria-describedby="button-addon3"/>
                                 <button
-                                    className="bg-white relative z-[2] rounded-e border border-secondary-500 px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-primary transition duration-150 ease-in-out focus:outline-none focus:ring-0 active:border-primary-700 active:text-primary-700 motion-reduce:transition-none dark:text-primary-500 dark:hover:bg-blue-950 dark:focus:bg-blue-950"
+                                    className="bg-white relative z-[2] rounded-e border border-secondary-500 px-6 pb-[6px] pt-2 text-xs font-medium uppercase leading-normal text-primary focus:outline-none focus:ring-0 active:border-primary-700 active:text-primary-700 dark:text-primary-500 dark:hover:bg-blue-950 dark:focus:bg-blue-950"
                                     type="button"
                                     id="button-addon3"
                                     data-twe-ripple-init="">
@@ -136,7 +135,7 @@ function Nav() {
                             data-twe-dropdown-ref=""
                             data-twe-dropdown-alignment="end">
                             <a
-                                className="flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none"
+                                className="flex items-center whitespace-nowrap"
                                 href="#"
                                 id="dropdownMenuButton2"
                                 role="button"
@@ -155,7 +154,7 @@ function Nav() {
                                 aria-labelledby="dropdownMenuButton2"
                                 data-twe-dropdown-menu-ref="">
                                 {
-                                    isAuthorized === false  &&
+                                    isAuthorized === false &&
                                     <>
                                         <li>
                                             <Link
@@ -191,7 +190,7 @@ function Nav() {
                                             className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
                                             to="/admin"
                                             data-twe-dropdown-item-ref="">
-                                        Admin
+                                            Admin
                                         </Link>
                                     </li>
                                 }

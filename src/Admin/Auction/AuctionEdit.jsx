@@ -170,7 +170,7 @@ function AuctionEdit() {
                             />
                         </div>
                         <div className={"flex flex-col"}>
-                            <label htmlFor="startDateTime">Start Date Time</label>
+                            <label htmlFor="durationInSeconds">Duration In Seconds</label>
                             <input
                                 value={auctionForm.durationInSeconds}
                                 type={"number"}
