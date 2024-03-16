@@ -89,6 +89,10 @@ function ProductCreate() {
             toast("Unauthorized", {
                 type: "error",
             })
+        } else if (response.status === 413) {
+            toast("File is too large", {
+                type: "error",
+            })
         } else if (response.status === 400) {
             const data = await response.json();
             setErrors(Object.values(data.errors))
