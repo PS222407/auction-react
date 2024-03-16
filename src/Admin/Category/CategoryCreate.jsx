@@ -27,7 +27,9 @@ function CategoryCreate() {
     }, []);
 
     useEffect(() => {
-        if (config) getUserInfo();
+        if (config) {
+            getUserInfo();
+        }
     }, [config]);
 
     async function getUserInfo() {
@@ -71,7 +73,9 @@ function CategoryCreate() {
     }
 
     if (isAuthorized === false) {
-        return <div>Unauthorized request</div>
+        return "Unauthorized request"
+    } else if (isAuthorized === null) {
+        return "loading..."
     }
 
     return (

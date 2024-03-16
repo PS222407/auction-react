@@ -22,8 +22,16 @@ function ProductIndex() {
     }, []);
 
     useEffect(() => {
-        if (config) getProducts();
+        if (config) {
+            getUserInfo()
+            getProducts();
+        }
     }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     async function getProducts() {
         const response = await fetch(`${config.API_URL}/api/v1/Product`, {
@@ -34,8 +42,6 @@ function ProductIndex() {
 
         if (response.status === 200) {
             setProducts(await response.json());
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 
@@ -53,7 +59,9 @@ function ProductIndex() {
     }
 
     if (isAuthorized === false) {
-        return <div>Unauthorized request</div>
+        return "Unauthorized request"
+    } else if (isAuthorized === null) {
+        return "loading..."
     }
 
     return (
