@@ -51,6 +51,7 @@ function LoginPage() {
 
             toast("Login successful", {
                 type: "success",
+                position: "bottom-right"
             })
 
             localStorage.setItem("auth", JSON.stringify({
@@ -63,11 +64,13 @@ function LoginPage() {
         } else if (response.status === 401) {
             toast("Unauthorized", {
                 type: "error",
+                position: "bottom-right"
             })
         } else if (response.status === 400) {
             const data = await response.json();
             toast(Object.values(data.errors)[0][0], {
                 type: "error",
+                position: "bottom-right"
             })
         }
     }
