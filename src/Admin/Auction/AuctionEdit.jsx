@@ -114,7 +114,9 @@ function AuctionEdit() {
     }
 
     if (isAuthorized === false) {
-        return <div>Unauthorized request</div>
+        return "Unauthorized request"
+    } else if (isAuthorized === null) {
+        return "loading..."
     }
 
     return (
