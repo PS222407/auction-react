@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Link} from "react-router-dom";
 import {initFlowbite} from "flowbite";
 
 function AdminNav() {
     initFlowbite();
+    useEffect(() => {
+        initFlowbite();
+    }, []);
 
     return (
         <>
