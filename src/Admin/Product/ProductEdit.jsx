@@ -34,10 +34,16 @@ function ProductEdit() {
 
     useEffect(() => {
         if (config) {
+            getUserInfo();
             getProduct();
             getCategories();
         }
     }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     async function getCategories() {
         const response = await fetch(`${config.API_URL}/api/v1/Category`, {
@@ -48,8 +54,6 @@ function ProductEdit() {
 
         if (response.status === 200) {
             setCategories(await response.json());
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 
@@ -60,12 +64,12 @@ function ProductEdit() {
             },
         });
 
-        const productFromApi = await response.json();
+        const data = await response.json();
         setProductForm({
-            name: productFromApi.name,
-            description: productFromApi.description,
-            imageUrl: productFromApi.imageUrl,
-            category: productFromApi.categoryId,
+            name: data.name,
+            description: data.description,
+            imageUrl: data.imageUrl,
+            category: data.category.id,
         })
     }
 
@@ -127,7 +131,9 @@ function ProductEdit() {
     }
 
     if (isAuthorized === false) {
-        return <div>Unauthorized request</div>
+        return "Unauthorized request"
+    } else if (isAuthorized === null) {
+        return "loading..."
     }
 
     return (

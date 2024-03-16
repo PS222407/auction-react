@@ -22,8 +22,16 @@ function AuctionIndex() {
     }, []);
 
     useEffect(() => {
-        if (config) getAuctions();
+        if (config) {
+            getUserInfo();
+            getAuctions();
+        }
     }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     async function getAuctions() {
         const response = await fetch(`${config.API_URL}/api/v1/Auction`, {
@@ -34,8 +42,6 @@ function AuctionIndex() {
 
         if (response.status === 200) {
             setAuctions(await response.json());
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 
@@ -53,7 +59,9 @@ function AuctionIndex() {
     }
 
     if (isAuthorized === false) {
-        return <div>Unauthorized request</div>
+        return "Unauthorized request"
+    } else if (isAuthorized === null) {
+        return "loading..."
     }
 
     return (
