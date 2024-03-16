@@ -82,16 +82,19 @@ function ProductCreate() {
         if (response.status === 200) {
             toast("Created successfully", {
                 type: "success",
+                position: "bottom-right"
             });
 
             return navigate("/admin/products");
         } else if (response.status === 401) {
             toast("Unauthorized", {
                 type: "error",
+                position: "bottom-right"
             })
         } else if (response.status === 413) {
             toast("File is too large", {
                 type: "error",
+                position: "bottom-right"
             })
         } else if (response.status === 400) {
             const data = await response.json();
@@ -99,6 +102,7 @@ function ProductCreate() {
 
             toast("Validation error", {
                 type: "error",
+                position: "bottom-right"
             })
         }
     }

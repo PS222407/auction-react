@@ -68,6 +68,7 @@ function AuctionCreate() {
         if (response.status === 200) {
             toast("Created successfully", {
                 type: "success",
+                position: "bottom-right"
             });
 
             return navigate("/admin/auctions");

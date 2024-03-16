@@ -16,6 +16,7 @@ import CategoryEdit from "./Admin/Category/CategoryEdit.jsx";
 import AuctionIndex from "./Admin/Auction/AuctionIndex.jsx";
 import AuctionEdit from "./Admin/Auction/AuctionEdit.jsx";
 import AuctionCreate from "./Admin/Auction/AuctionCreate.jsx";
+import AuctionPage from "./Auction/AuctionPage.jsx";
 
 function App() {
     return (
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/register" element={<RegisterPage/>}/>
                 <Route path="/categories/:id" element={<CategoryPage/>}/>
                 <Route path="/products/:id" element={<ProductPage/>}/>
+                <Route path={"/auctions/:id"} element={<AuctionPage/>}/>
 
                 {/*ADMIN*/}
                 <Route path="/admin" element={<AdminPage/>}/>

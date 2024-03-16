@@ -28,11 +28,11 @@ function CategoryEdit() {
 
     useEffect(() => {
         if (config) {
-            getCategories();
+            getCategory();
         }
     }, [config]);
 
-    async function getCategories() {
+    async function getCategory() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
@@ -76,6 +76,7 @@ function CategoryEdit() {
         if (response.status === 200) {
             toast("Updated successfully", {
                 type: "success",
+                position: "bottom-right"
             });
 
             return navigate("/admin/categories");
