@@ -27,7 +27,9 @@ function CategoryCreate() {
     }, []);
 
     useEffect(() => {
-        if (config) getUserInfo();
+        if (config) {
+            getUserInfo();
+        }
     }, [config]);
 
     async function getUserInfo() {

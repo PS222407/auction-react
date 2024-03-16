@@ -28,9 +28,15 @@ function CategoryEdit() {
 
     useEffect(() => {
         if (config) {
+            getUserInfo();
             getCategory();
         }
     }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     async function getCategory() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
@@ -45,8 +51,6 @@ function CategoryEdit() {
                 name: categoryFromApi.name,
                 icon: categoryFromApi.icon,
             })
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 

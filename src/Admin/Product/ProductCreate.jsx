@@ -32,9 +32,15 @@ function ProductCreate() {
 
     useEffect(() => {
         if (config) {
+            getUserInfo();
             getCategories();
         }
     }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     async function getCategories() {
         const response = await fetch(`${config.API_URL}/api/v1/Category`, {
@@ -45,8 +51,6 @@ function ProductCreate() {
 
         if (response.status === 200) {
             setCategories(await response.json());
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 

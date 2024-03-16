@@ -32,10 +32,16 @@ function AuctionEdit() {
 
     useEffect(() => {
         if (config) {
+            getUserInfo();
             getAuction();
             getProducts();
         }
     }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     async function getProducts() {
         const response = await fetch(`${config.API_URL}/api/v1/Product`, {
@@ -46,8 +52,6 @@ function AuctionEdit() {
 
         if (response.status === 200) {
             setProducts(await response.json());
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 
@@ -62,7 +66,7 @@ function AuctionEdit() {
         setAuctionForm({
             durationInSeconds: data.durationInSeconds,
             startDateTime: data.startDateTime,
-            productId: data.productId
+            productId: data.product.id
         })
     }
 
@@ -147,7 +151,7 @@ function AuctionEdit() {
                                 </option>
                                 {
                                     products.map((product) => {
-                                        return <option selected={product.id === auctionForm.product} key={product.id}
+                                        return <option selected={product.id === auctionForm.productId} key={product.id}
                                                        value={product.id}>{product.name}</option>
                                     })
                                 }

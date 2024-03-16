@@ -29,8 +29,16 @@ function AuctionCreate() {
     }, []);
 
     useEffect(() => {
-        if (config) getProducts();
+        if (config) {
+            getUserInfo();
+            getProducts();
+        }
     }, [config]);
+
+    async function getUserInfo() {
+        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
+        setIsAuthorized(response.status === 200);
+    }
 
     async function getProducts() {
         const response = await fetch(`${config.API_URL}/api/v1/Product`, {
