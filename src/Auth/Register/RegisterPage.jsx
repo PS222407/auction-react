@@ -53,12 +53,14 @@ function RegisterPage() {
         if (response.status === 200) {
             toast("Registered successfully", {
                 type: "success",
+                position: "bottom-right"
             })
             return navigate("/login");
         } else if (response.status === 400) {
             const data = await response.json();
             toast(Object.values(data.errors)[0][0], {
                 type: "error",
+                position: "bottom-right"
             })
         }
     }

@@ -89,12 +89,14 @@ function AuctionEdit() {
         if (response.status === 200) {
             toast("Updated successfully", {
                 type: "success",
+                position: "bottom-right"
             });
 
             return navigate("/admin/auctions");
         } else if (response.status === 401) {
             toast("Unauthorized", {
                 type: "error",
+                position: "bottom-right"
             })
         } else if (response.status === 400) {
             const data = await response.json();
@@ -102,6 +104,7 @@ function AuctionEdit() {
 
             toast("Validation error", {
                 type: "error",
+                position: "bottom-right"
             })
         }
     }
