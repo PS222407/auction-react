@@ -3,12 +3,14 @@ import AdminNav from "../AdminNav.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {toast} from "react-toastify";
+import Spinner from "../../Components/Spinner.jsx";
 
 function CategoryCreate() {
     const navigate = useNavigate();
     const [config, setConfig] = useState("");
     const [accessToken, setAccessToken] = useState();
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [formIsLoading, setFormIsLoading] = useState(false);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
         icon: '',
@@ -51,6 +53,7 @@ function CategoryCreate() {
     }
 
     async function postCreateCategory() {
+        setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Category`, {
             method: "POST",
             headers: {
@@ -59,6 +62,7 @@ function CategoryCreate() {
             },
             body: JSON.stringify(categoryForm),
         });
+        setFormIsLoading(false);
 
         if (response.status === 200) {
             toast("Created successfully", {
@@ -116,6 +120,12 @@ function CategoryCreate() {
                             />
                         </div>
                         <div>
+                            {
+                                formIsLoading &&
+                                <div className={"flex justify-center mb-2"}>
+                                    <Spinner />
+                                </div>
+                            }
                             <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={handleSubmitCategory}>
                                 Submit

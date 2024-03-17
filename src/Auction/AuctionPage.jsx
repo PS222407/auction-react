@@ -9,6 +9,7 @@ import MoneyTransformer from "../Services/MoneyTransformer.js";
 import {toast} from "react-toastify";
 import {HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
 import pling from "../assets/sounds/pling.mp3";
+import Spinner from "../Components/Spinner.jsx";
 
 function AuctionPage() {
     const {id} = useParams();
@@ -20,6 +21,7 @@ function AuctionPage() {
     const [price, setPrice] = useState();
     const [connection, setConnection] = useState();
     const wsStarted = useRef(false);
+    const [formIsLoading, setFormIsLoading] = useState(false);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -114,6 +116,7 @@ function AuctionPage() {
         e.preventDefault();
         if (isCompleted) return;
 
+        setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Bid`, {
             method: "POST",
             headers: {
@@ -125,6 +128,7 @@ function AuctionPage() {
                 priceInCents: (new MoneyTransformer()).moneyDB(price),
             }),
         });
+        setFormIsLoading(false);
 
         if (response.status === 200) {
             toast("Updated successfully", {
@@ -170,6 +174,12 @@ function AuctionPage() {
                                                 place a bid</Link>
                                         ) : (
                                             <form onSubmit={submitBid}>
+                                                {
+                                                    formIsLoading &&
+                                                    <div className={"flex justify-center mb-2"}>
+                                                        <Spinner />
+                                                    </div>
+                                                }
                                                 <div className={'flex flex-col md:flex-row'}>
                                                     <div className={"flex"}>
                                                         <span className={"border border-black rounded text-4xl px-2"}>&euro;</span>

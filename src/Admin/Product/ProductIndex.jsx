@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
 import dayjs from "dayjs";
+import Spinner from "../../Components/Spinner.jsx";
 
 function ProductIndex() {
     const [config, setConfig] = useState("");
     const [products, setProducts] = useState([]);
     const [accessToken, setAccessToken] = useState();
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -34,12 +36,14 @@ function ProductIndex() {
     }
 
     async function getProducts() {
+        setIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
             },
         });
 
+        setIsLoading(false);
         if (response.status === 200) {
             setProducts(await response.json());
         }
@@ -82,6 +86,13 @@ function ProductIndex() {
                     </div>
 
                     <br/>
+
+                    {
+                        isLoading &&
+                        <div className={"flex justify-center mb-2"}>
+                            <Spinner />
+                        </div>
+                    }
 
                     <table>
                         <thead>
