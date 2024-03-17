@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
 import dayjs from "dayjs";
+import Spinner from "../../Components/Spinner.jsx";
 
 function CategoryIndex() {
     const [config, setConfig] = useState("");
     const [categories, setCategories] = useState([]);
     const [accessToken, setAccessToken] = useState();
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [formIsLoading, setFormIsLoading] = useState(true);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -34,11 +36,13 @@ function CategoryIndex() {
     }
 
     async function getCategories() {
+        setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Category`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
             },
         });
+        setFormIsLoading(false);
 
         if (response.status === 200) {
             setCategories(await response.json());
@@ -82,6 +86,13 @@ function CategoryIndex() {
                     </div>
 
                     <br/>
+
+                    {
+                        formIsLoading &&
+                        <div className={"flex justify-center mb-2"}>
+                            <Spinner />
+                        </div>
+                    }
 
                     <table>
                         <thead>

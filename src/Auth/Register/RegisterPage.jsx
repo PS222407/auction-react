@@ -3,10 +3,12 @@ import {Link, useNavigate} from "react-router-dom";
 import {initTWE, Input, Ripple,} from "tw-elements";
 import {toast} from "react-toastify";
 import Nav from "../../Layout/Nav.jsx";
+import Spinner from "../../Components/Spinner.jsx";
 
 function RegisterPage() {
     const navigate = useNavigate();
     const [config, setConfig] = useState("");
+    const [isLoadingRegister, setIsLoadingRegister] = useState(false);
     const [registerFormData, setRegisterFormData] = useState({
         email: "",
         password: "",
@@ -37,6 +39,7 @@ function RegisterPage() {
             alert("Passwords do not match");
         }
 
+        setIsLoadingRegister(true);
         const response = await fetch(`${config.API_URL}/api/register`, {
             method: "POST",
             headers: {
@@ -50,6 +53,7 @@ function RegisterPage() {
             }),
         });
 
+        setIsLoadingRegister(false);
         if (response.status === 200) {
             toast("Registered successfully", {
                 type: "success",
@@ -122,6 +126,13 @@ function RegisterPage() {
                                 </div>
 
                                 <div className="text-center lg:text-left">
+                                    {
+                                        isLoadingRegister &&
+                                        <div className={"flex justify-center mb-2"}>
+                                            <Spinner />
+                                        </div>
+                                    }
+
                                     <button
                                         className="inline-block w-full rounded bg-primary px-7 pb-2 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
                                         data-twe-ripple-init=""

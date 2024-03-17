@@ -50,12 +50,12 @@ function ProductPage() {
             <div className={"mx-4 xl:mx-auto max-w-screen-xl mt-10"}>
                 {
                     product &&
-                    <div className={"flex flex-col md:flex-row justify-between gap-20"}>
+                    <div className={"flex flex-col md:flex-row justify-between gap-y-3 md:gap-20"}>
                         <div className={"w-full"}>
                             <div>
-                                <img className={"w-96"} src={product.imageUrl} alt={product.name}/>
+                                <img className={"w-full aspect-square object-cover md:w-96"} src={product.imageUrl} alt={product.name}/>
                             </div>
-                            <div>{product.name}</div>
+                            <div className={"font-bold text-xl"}>{product.name}</div>
                             <div className={"mt-4"}>{product.description}</div>
                         </div>
 

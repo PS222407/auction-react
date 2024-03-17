@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react';
 import dayjs from "dayjs";
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
+import Spinner from "../../Components/Spinner.jsx";
 
 function AuctionIndex() {
     const [config, setConfig] = useState("");
     const [auctions, setAuctions] = useState([]);
     const [accessToken, setAccessToken] = useState();
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [formIsLoading, setFormIsLoading] = useState(true);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -34,11 +36,13 @@ function AuctionIndex() {
     }
 
     async function getAuctions() {
+        setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Auction`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
             },
         });
+        setFormIsLoading(false);
 
         if (response.status === 200) {
             setAuctions(await response.json());
@@ -83,6 +87,13 @@ function AuctionIndex() {
                     </div>
 
                     <br/>
+
+                    {
+                        formIsLoading &&
+                        <div className={"flex justify-center mb-2"}>
+                            <Spinner />
+                        </div>
+                    }
 
                     <table>
                         <thead>
