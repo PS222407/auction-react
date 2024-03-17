@@ -3,6 +3,7 @@ import AdminNav from "../AdminNav.jsx";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import dayjs from "dayjs";
 import {toast} from "react-toastify";
+import Spinner from "../../Components/Spinner.jsx";
 
 function ProductEdit() {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ function ProductEdit() {
     const [accessToken, setAccessToken] = useState();
     const [categories, setCategories] = useState([]);
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [formIsLoading, setFormIsLoading] = useState(false);
     const [productForm, setProductForm] = useState({
         name: '',
         description: '',
@@ -94,6 +96,7 @@ function ProductEdit() {
         productForm.image && formData.append('Image', productForm.image);
         productForm.category && formData.append('CategoryId', productForm.category);
 
+        setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "PUT",
             headers: {
@@ -102,6 +105,7 @@ function ProductEdit() {
             body: formData,
         });
 
+        setFormIsLoading(false);
         if (response.status === 200) {
             toast("Updated successfully", {
                 type: "success",
@@ -205,6 +209,12 @@ function ProductEdit() {
                             </select>
                         </div>
                         <div>
+                            {
+                                formIsLoading &&
+                                <div className={"flex justify-center mb-2"}>
+                                    <Spinner />
+                                </div>
+                            }
                             <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={handleSubmitProduct}>Submit
                             </button>

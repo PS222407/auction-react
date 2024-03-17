@@ -3,6 +3,7 @@ import AdminNav from "../AdminNav.jsx";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import dayjs from "dayjs";
 import {toast} from "react-toastify";
+import Spinner from "../../Components/Spinner.jsx";
 
 function CategoryEdit() {
     const navigate = useNavigate();
@@ -10,6 +11,7 @@ function CategoryEdit() {
     const [config, setConfig] = useState("");
     const [accessToken, setAccessToken] = useState();
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [formIsLoading, setFormIsLoading] = useState(false);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
     });
@@ -39,11 +41,13 @@ function CategoryEdit() {
     }
 
     async function getCategory() {
+        setFormIsLoading(true)
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
             },
         });
+        setFormIsLoading(false);
 
         if (response.status === 200) {
             const categoryFromApi = await response.json();
@@ -135,6 +139,12 @@ function CategoryEdit() {
                             />
                         </div>
                         <div>
+                            {
+                                formIsLoading &&
+                                <div className={"flex justify-center mb-2"}>
+                                    <Spinner/>
+                                </div>
+                            }
                             <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={handleSubmitCategory}>Submit
                             </button>

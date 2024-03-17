@@ -4,10 +4,12 @@ import {initTWE, Input, Ripple} from "tw-elements";
 import {toast} from "react-toastify";
 import Nav from "../../Layout/Nav.jsx";
 import dayjs from "dayjs";
+import Spinner from "../../Components/Spinner.jsx";
 
 function LoginPage() {
     const navigate = useNavigate();
     const [config, setConfig] = useState("");
+    const [loginIsLoading, setLoginIsLoading] = useState(false);
     const [loginFormData, setLoginFormData] = useState({
         email: "",
         password: "",
@@ -33,6 +35,7 @@ function LoginPage() {
     async function handleLogin(e) {
         e.preventDefault();
 
+        setLoginIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/login`, {
             method: "POST",
             headers: {
@@ -46,6 +49,7 @@ function LoginPage() {
             }),
         });
 
+        setLoginIsLoading(false);
         if (response.status === 200) {
             const data = await response.json();
 
@@ -122,6 +126,13 @@ function LoginPage() {
                                 {/*</div>*/}
 
                                 <div className="text-center lg:text-left">
+                                    {
+                                        loginIsLoading &&
+                                        <div className={"flex justify-center mb-2"}>
+                                            <Spinner />
+                                        </div>
+                                    }
+
                                     <button
                                         className="inline-block w-full rounded bg-primary px-7 pb-2 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
                                         data-twe-ripple-init=""
@@ -134,7 +145,8 @@ function LoginPage() {
                                         <Link
                                             to="/register"
                                             className="text-danger transition duration-150 ease-in-out hover:text-danger-600 focus:text-danger-600 active:text-danger-700"
-                                        >Register</Link
+                                        >
+                                            Register</Link
                                         >
                                     </p>
                                 </div>

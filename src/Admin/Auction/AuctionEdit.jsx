@@ -3,6 +3,7 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import dayjs from "dayjs";
 import {toast} from "react-toastify";
 import AdminNav from "../AdminNav.jsx";
+import Spinner from "../../Components/Spinner.jsx";
 
 function AuctionEdit() {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ function AuctionEdit() {
     const [accessToken, setAccessToken] = useState();
     const [products, setProducts] = useState([]);
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
         productId: '',
         startDateTime: '',
@@ -56,11 +58,13 @@ function AuctionEdit() {
     }
 
     async function getAuction() {
+        setFormIsLoading(true)
         const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
             headers: {
                 "Authorization": "Bearer " + accessToken,
             },
         });
+        setFormIsLoading(false);
 
         const data = await response.json();
         setAuctionForm({
@@ -180,6 +184,12 @@ function AuctionEdit() {
                             />
                         </div>
                         <div>
+                            {
+                                formIsLoading &&
+                                <div className={"flex justify-center mb-2"}>
+                                    <Spinner />
+                                </div>
+                            }
                             <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={postEditAuction}>Submit
                             </button>

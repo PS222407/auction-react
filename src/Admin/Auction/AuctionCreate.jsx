@@ -3,6 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {toast} from "react-toastify";
 import AdminNav from "../AdminNav.jsx";
+import Spinner from "../../Components/Spinner.jsx";
 
 function AuctionCreate() {
     const navigate = useNavigate();
@@ -10,6 +11,7 @@ function AuctionCreate() {
     const [accessToken, setAccessToken] = useState();
     const [isAuthorized, setIsAuthorized] = useState(null);
     const [products, setProducts] = useState([]);
+    const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
         productId: '',
         startDateTime: '',
@@ -64,6 +66,7 @@ function AuctionCreate() {
     async function postCreateAuction(e) {
         e.preventDefault();
 
+        setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Auction`, {
             method: "POST",
             headers: {
@@ -72,6 +75,7 @@ function AuctionCreate() {
             },
             body: JSON.stringify(auctionForm),
         });
+        setFormIsLoading(false);
 
         if (response.status === 200) {
             toast("Created successfully", {
@@ -142,6 +146,12 @@ function AuctionCreate() {
                             />
                         </div>
                         <div>
+                            {
+                                formIsLoading &&
+                                <div className={"flex justify-center mb-2"}>
+                                    <Spinner />
+                                </div>
+                            }
                             <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}>
                                 Submit
                             </button>
