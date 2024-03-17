@@ -31,10 +31,6 @@ function AuctionPage() {
         dayjs.extend(duration);
 
         getConfig();
-
-        // return () => {
-        //     alert("des");
-        // }
     }, []);
 
     useEffect(() => {
@@ -43,7 +39,49 @@ function AuctionPage() {
             getUserInfo();
             makeConnection();
         }
-    }, [config]);
+
+        async function makeConnection() {
+            if (connection) {
+                return;
+            }
+
+            const conn = new HubConnectionBuilder()
+                .withUrl(`${config.API_URL}/api/mainHub`)
+                .configureLogging(LogLevel.Critical)
+                .withAutomaticReconnect()
+                .build();
+
+            setConnection(conn)
+
+            await conn.start().then(() => {
+                console.log("Connected to hub");
+            }).catch((error) => {
+                console.log("Connection hub Error: " + error);
+            });
+
+            const groupName = `Auction-${id}`;
+            await conn.invoke("AddToAuctionGroup", {groupName})
+
+            conn.on("ReceiveBids", (bidRequest) => {
+                console.log(bidRequest, auction)
+                setAuction(auction => ({
+                    ...auction,
+                    bids: [bidRequest, ...auction.bids]
+                }))
+            });
+        }
+
+        return () => {
+            console.log("Closing connection", connection)
+            if (connection) {
+                connection.stop().then(() => {
+                    console.log("Connection stopped");
+                }).catch((error) => {
+                    console.log("Connection stopped Error: " + error);
+                });
+            }
+        }
+    }, [config, connection]);
 
     async function getUserInfo() {
         const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
@@ -90,37 +128,6 @@ function AuctionPage() {
                 position: "bottom-right"
             });
         }
-    }
-
-    async function makeConnection() {
-        if (connection) {
-            return;
-        }
-
-        const conn = new HubConnectionBuilder()
-            .withUrl(`${config.API_URL}/api/mainHub`)
-            .configureLogging(LogLevel.Information)
-            .withAutomaticReconnect()
-            .build();
-
-        setConnection(conn)
-
-        await conn.start().then(() => {
-            console.log("Connected to hub");
-        }).catch((error) => {
-            console.log("Connection hub Error: " + error);
-        });
-
-        const groupName = `Auction-${id}`;
-        await conn.invoke("AddToAuctionGroup", {groupName})
-
-        conn.on("ReceiveBids", (bidRequest) => {
-            console.log(bidRequest, auction)
-            setAuction(auction => ({
-                ...auction,
-                bids: [bidRequest, ...auction.bids]
-            }))
-        });
     }
 
     return (
