@@ -7,6 +7,7 @@ import Countdown from "react-countdown";
 import InputMoney from "../Components/Inputs/InputMoney.jsx";
 import MoneyTransformer from "../Services/MoneyTransformer.js";
 import {toast} from "react-toastify";
+import {HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
 
 function AuctionPage() {
     const {id} = useParams();
@@ -16,6 +17,7 @@ function AuctionPage() {
     const [auction, setAuction] = useState();
     const [isCompleted, setIsCompleted] = useState(false);
     const [price, setPrice] = useState();
+    const [connection, setConnection] = useState();
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -29,16 +31,18 @@ function AuctionPage() {
         dayjs.extend(duration);
 
         getConfig();
+
+        // return () => {
+        //     alert("des");
+        // }
     }, []);
 
     useEffect(() => {
         if (config) {
             getAuction();
             getUserInfo();
+            makeConnection();
         }
-    }, [config]);
-
-    useEffect(() => {
     }, [config]);
 
     async function getUserInfo() {
@@ -76,8 +80,6 @@ function AuctionPage() {
         });
 
         if (response.status === 200) {
-            await getAuction();
-
             toast("Updated successfully", {
                 type: "success",
                 position: "bottom-right"
@@ -90,6 +92,37 @@ function AuctionPage() {
         }
     }
 
+    async function makeConnection() {
+        if (connection) {
+            return;
+        }
+
+        const conn = new HubConnectionBuilder()
+            .withUrl(`${config.API_URL}/api/mainHub`)
+            .configureLogging(LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
+
+        setConnection(conn)
+
+        await conn.start().then(() => {
+            console.log("Connected to hub");
+        }).catch((error) => {
+            console.log("Connection hub Error: " + error);
+        });
+
+        const groupName = `Auction-${id}`;
+        await conn.invoke("AddToAuctionGroup", {groupName})
+
+        conn.on("ReceiveBids", (bidRequest) => {
+            console.log(bidRequest, auction)
+            setAuction(auction => ({
+                ...auction,
+                bids: [bidRequest, ...auction.bids]
+            }))
+        });
+    }
+
     return (
         <div>
             <Nav/>
@@ -97,12 +130,12 @@ function AuctionPage() {
             <div className={"mx-4 xl:mx-auto max-w-screen-xl mt-10"}>
                 {
                     auction &&
-                    <div className={"flex flex-col md:flex-row justify-between gap-20"}>
+                    <div className={"flex flex-col md:flex-row justify-between gap-y-3 md:gap-20"}>
                         <div className={"w-full"}>
                             <div>
-                                <img className={"w-96"} src={auction.product.imageUrl} alt={auction.product.name}/>
+                                <img className={"w-full aspect-square object-cover md:w-96"} src={auction.product.imageUrl} alt={auction.product.name}/>
                             </div>
-                            <div>{auction.product.name}</div>
+                            <div className={"font-bold text-xl"}>{auction.product.name}</div>
                             <div className={"mt-4"}>{auction.product.description}</div>
                         </div>
 
