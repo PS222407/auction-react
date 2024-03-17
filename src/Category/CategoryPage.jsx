@@ -29,7 +29,6 @@ function CategoryPage() {
         if (response.status === 200) {
             const data = await response.json();
             setCategory(data);
-            console.log(data.products)
         }
     }
 
