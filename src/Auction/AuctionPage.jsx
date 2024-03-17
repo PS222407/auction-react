@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import Nav from "../Layout/Nav.jsx";
 import dayjs from "dayjs";
@@ -8,6 +8,7 @@ import InputMoney from "../Components/Inputs/InputMoney.jsx";
 import MoneyTransformer from "../Services/MoneyTransformer.js";
 import {toast} from "react-toastify";
 import {HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
+import pling from "../assets/sounds/pling.mp3";
 
 function AuctionPage() {
     const {id} = useParams();
@@ -18,6 +19,7 @@ function AuctionPage() {
     const [isCompleted, setIsCompleted] = useState(false);
     const [price, setPrice] = useState();
     const [connection, setConnection] = useState();
+    const wsStarted = useRef(false);
 
     useEffect(() => {
         if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
@@ -27,61 +29,68 @@ function AuctionPage() {
         async function getConfig() {
             setConfig(await fetch('/config.json').then((res) => res.json()));
         }
+        getConfig();
 
         dayjs.extend(duration);
-
-        getConfig();
     }, []);
 
     useEffect(() => {
         if (config) {
             getAuction();
             getUserInfo();
-            makeConnection();
-        }
 
-        async function makeConnection() {
-            if (connection) {
-                return;
-            }
-
-            const conn = new HubConnectionBuilder()
+            const newConnection = new HubConnectionBuilder()
                 .withUrl(`${config.API_URL}/api/mainHub`)
                 .configureLogging(LogLevel.Critical)
                 .withAutomaticReconnect()
                 .build();
 
-            setConnection(conn)
+            setConnection(newConnection)
+        }
+    }, [config]);
 
-            await conn.start().then(() => {
-                console.log("Connected to hub");
-            }).catch((error) => {
-                console.log("Connection hub Error: " + error);
-            });
+    useEffect(() => {
+        if (!config) return;
+        if (!connection) return;
+        if (wsStarted.current === true) return;
+
+        async function startConnection() {
+            await connection.start()
+                .then(() => {
+                    console.log("Connected to hub");
+                    wsStarted.current = true;
+                })
+                .catch((error) => console.log("Connection hub Error: " + error));
 
             const groupName = `Auction-${id}`;
-            await conn.invoke("AddToAuctionGroup", {groupName})
+            connection.invoke("AddToAuctionGroup", {groupName})
 
-            conn.on("ReceiveBids", (bidRequest) => {
+            connection.on("ReceiveBids", (bidRequest) => {
                 console.log(bidRequest, auction)
+                new Audio(pling).play();
                 setAuction(auction => ({
                     ...auction,
                     bids: [bidRequest, ...auction.bids]
                 }))
             });
         }
+        startConnection();
 
         return () => {
+            stopConn();
             console.log("Closing connection", connection)
-            if (connection) {
-                connection.stop().then(() => {
-                    console.log("Connection stopped");
-                }).catch((error) => {
-                    console.log("Connection stopped Error: " + error);
-                });
-            }
         }
-    }, [config, connection]);
+    }, [connection]);
+
+    async function stopConn() {
+        if (!connection) return;
+
+        connection.stop().then(() => {
+            console.log("Connection stopped");
+        }).catch((error) => {
+            console.log("Connection stopped Error: " + error);
+        });
+    }
 
     async function getUserInfo() {
         const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
@@ -133,6 +142,8 @@ function AuctionPage() {
     return (
         <div>
             <Nav/>
+
+            {/*<button onClick={stopConn} className={"p-3 bg-red-500"}>stop</button>*/}
 
             <div className={"mx-4 xl:mx-auto max-w-screen-xl mt-10"}>
                 {
