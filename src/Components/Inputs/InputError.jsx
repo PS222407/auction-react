@@ -1,5 +1,3 @@
-import React from 'react';
-
 function InputError({formErrors, name}) {
     let show;
 

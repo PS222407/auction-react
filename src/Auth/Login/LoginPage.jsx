@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {initTWE, Input, Ripple} from "tw-elements";
-import {toast} from "react-toastify";
 import Nav from "../../Layout/Nav.jsx";
-import dayjs from "dayjs";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function LoginPage() {
     const navigate = useNavigate();
-    const [config, setConfig] = useState("");
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const [loginIsLoading, setLoginIsLoading] = useState(false);
     const [loginFormData, setLoginFormData] = useState({
         email: "",
@@ -17,12 +18,6 @@ function LoginPage() {
 
     useEffect(() => {
         initTWE({Input, Ripple});
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
     }, []);
 
     function handleFormChange(value, name) {
@@ -35,48 +30,18 @@ function LoginPage() {
     async function handleLogin(e) {
         e.preventDefault();
 
-        setLoginIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                email: loginFormData.email,
-                password: loginFormData.password,
-            }),
-        });
+        await auth.login(loginFormData.email, loginFormData.password);
 
-        setLoginIsLoading(false);
-        if (response.status === 200) {
-            const data = await response.json();
+        // toast(Object.values(data.errors)[0][0], {
+        //     type: "error",
+        //     position: "bottom-right"
+        // })
+        // toast("Login successful", {
+        //     type: "success",
+        //     position: "bottom-right"
+        // })
 
-            toast("Login successful", {
-                type: "success",
-                position: "bottom-right"
-            })
-
-            localStorage.setItem("auth", JSON.stringify({
-                accessToken: data.accessToken,
-                refreshToken: data.refreshToken,
-                expiresAt: dayjs().add(data.expiresIn, 'second')
-            }))
-
-            return navigate("/");
-        } else if (response.status === 401) {
-            toast("Unauthorized", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 400) {
-            const data = await response.json();
-            toast(Object.values(data.errors)[0][0], {
-                type: "error",
-                position: "bottom-right"
-            })
-        }
+        return navigate("/");
     }
 
     return (
@@ -97,7 +62,8 @@ function LoginPage() {
                                 <div className="relative mb-6" data-twe-input-wrapper-init="">
                                     <input
                                         onChange={(e) => handleFormChange(e.target.value, "email")}
-                                        type="text"
+                                        type="email"
+                                        autoComplete={"email"}
                                         className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
                                         id="exampleFormControlInput2"
                                         placeholder="Email address"/>
@@ -111,6 +77,7 @@ function LoginPage() {
                                     <input
                                         onChange={(e) => handleFormChange(e.target.value, "password")}
                                         type="password"
+                                        autoComplete={"current-password"}
                                         className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
                                         id="exampleFormControlInput22"
                                         placeholder="Password"/>

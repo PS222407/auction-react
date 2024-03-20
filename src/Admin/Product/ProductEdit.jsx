@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import dayjs from "dayjs";
 import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function ProductEdit() {
-    const navigate = useNavigate();
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const {id} = useParams();
-    const [config, setConfig] = useState("");
+    const navigate = useNavigate();
     const [errors, setErrors] = useState([]);
-    const [accessToken, setAccessToken] = useState();
     const [categories, setCategories] = useState([]);
-    const [isAuthorized, setIsAuthorized] = useState(null);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [productForm, setProductForm] = useState({
         name: '',
@@ -23,34 +23,16 @@ function ProductEdit() {
     });
 
     useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
-
-    useEffect(() => {
-        if (config) {
-            getUserInfo();
+        if (auth.user) {
             getProduct();
             getCategories();
         }
-    }, [config]);
-
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-        setIsAuthorized(response.status === 200);
-    }
+    }, [auth.user]);
 
     async function getCategories() {
         const response = await fetch(`${config.API_URL}/api/v1/Category`, {
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
 
@@ -62,7 +44,7 @@ function ProductEdit() {
     async function getProduct() {
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
 
@@ -100,7 +82,7 @@ function ProductEdit() {
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "PUT",
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: formData,
         });
@@ -134,10 +116,10 @@ function ProductEdit() {
         }
     }
 
-    if (isAuthorized === false) {
-        return "Unauthorized request"
-    } else if (isAuthorized === null) {
-        return "loading..."
+    if (auth.user === undefined) {
+        return "Loading...";
+    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
+        return "Unauthorized...";
     }
 
     return (

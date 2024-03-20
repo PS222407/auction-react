@@ -1,21 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Nav from "../Layout/Nav.jsx";
 import {useParams} from "react-router-dom";
 import Product from "./Product.jsx";
-import dayjs from "dayjs";
+import ConfigContext from "../provider/ConfigProvider.jsx";
 
 function CategoryPage() {
+    const config = useContext(ConfigContext);
     const {id} = useParams();
-    const [config, setConfig] = useState("");
     const [category, setCategory] = useState();
-
-    useEffect(() => {
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
 
     useEffect(() => {
         if (config) {
@@ -42,7 +34,6 @@ function CategoryPage() {
                     {
                         category && category.products.map((product) => (
                             <Product key={product.id} product={product} />
-                            // <div key={product.id}>{product.name}</div>
                         ))
                     }
                 </div>

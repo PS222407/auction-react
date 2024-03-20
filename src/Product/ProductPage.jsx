@@ -1,41 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import Nav from "../Layout/Nav.jsx";
 import dayjs from "dayjs";
+import ConfigContext from "../provider/ConfigProvider.jsx";
 import duration from 'dayjs/plugin/duration';
 
 function ProductPage() {
+    const config = useContext(ConfigContext);
     const {id} = useParams();
-    const [config, setConfig] = useState("");
-    const [accessToken, setAccessToken] = useState();
     const [product, setProduct] = useState();
-
-    useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-
-        dayjs.extend(duration);
-    }, []);
 
     useEffect(() => {
         if (config) {
             getProduct();
         }
+
+        dayjs.extend(duration);
     }, [config]);
 
     async function getProduct() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
-            headers: {
-                "Authorization": "Bearer " + accessToken,
-            },
-        });
+        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`);
 
         if (response.status === 200) {
             const data = await response.json();

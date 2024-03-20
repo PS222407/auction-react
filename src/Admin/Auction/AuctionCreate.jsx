@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
-import dayjs from "dayjs";
 import {toast} from "react-toastify";
 import AdminNav from "../AdminNav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function AuctionCreate() {
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const navigate = useNavigate();
-    const [config, setConfig] = useState("");
-    const [accessToken, setAccessToken] = useState();
-    const [isAuthorized, setIsAuthorized] = useState(null);
     const [products, setProducts] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
@@ -19,40 +19,20 @@ function AuctionCreate() {
     });
 
     useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
-
-    useEffect(() => {
-        if (config) {
-            getUserInfo();
+        if (config && auth.user) {
             getProducts();
         }
-    }, [config]);
-
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-        setIsAuthorized(response.status === 200);
-    }
+    }, [config, auth.user]);
 
     async function getProducts() {
         const response = await fetch(`${config.API_URL}/api/v1/Product`, {
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
 
         if (response.status === 200) {
             setProducts(await response.json());
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 
@@ -71,7 +51,7 @@ function AuctionCreate() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(auctionForm),
         });
@@ -84,15 +64,13 @@ function AuctionCreate() {
             });
 
             return navigate("/admin/auctions");
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
 
-    if (isAuthorized === false) {
-        return "Unauthorized request"
-    } else if (isAuthorized === null) {
-        return "loading..."
+    if (auth.user === undefined) {
+        return "Loading...";
+    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
+        return "Unauthorized...";
     }
 
     return (

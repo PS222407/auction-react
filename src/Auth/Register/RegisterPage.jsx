@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {initTWE, Input, Ripple,} from "tw-elements";
 import {toast} from "react-toastify";
 import Nav from "../../Layout/Nav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
 
 function RegisterPage() {
     const navigate = useNavigate();
-    const [config, setConfig] = useState("");
+    const config = useContext(ConfigContext);
     const [isLoadingRegister, setIsLoadingRegister] = useState(false);
     const [registerFormData, setRegisterFormData] = useState({
         email: "",
@@ -17,12 +18,6 @@ function RegisterPage() {
 
     useEffect(() => {
         initTWE({Input, Ripple});
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
     }, []);
 
     function handleFormChange(value, name) {

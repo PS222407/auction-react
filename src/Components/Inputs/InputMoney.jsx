@@ -1,4 +1,3 @@
-import React from 'react';
 import InputError from "./InputError";
 
 function InputMoney({formErrors, setValue, name, defaultValue, label = null, commaAsDecimalPoint = true, maxDecimalPlaces = 2, errorName = null, ...props}) {

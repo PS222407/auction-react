@@ -1,18 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Nav from "./Layout/Nav.jsx";
 import Category from "./Category.jsx";
+import ConfigContext from "./provider/ConfigProvider.jsx";
 
 function HomePage() {
-    const [config, setConfig] = useState("");
+    const config = useContext(ConfigContext);
     const [categories, setCategories] = useState([]);
-
-    useEffect(() => {
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
 
     useEffect(() => {
         if (config) {

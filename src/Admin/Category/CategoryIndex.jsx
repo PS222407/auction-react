@@ -1,47 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
-import dayjs from "dayjs";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function CategoryIndex() {
-    const [config, setConfig] = useState("");
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const [categories, setCategories] = useState([]);
-    const [accessToken, setAccessToken] = useState();
-    const [isAuthorized, setIsAuthorized] = useState(null);
     const [formIsLoading, setFormIsLoading] = useState(true);
 
     useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
-
-    useEffect(() => {
         if (config) {
-            getUserInfo();
             getCategories();
         }
     }, [config]);
 
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-        setIsAuthorized(response.status === 200);
-    }
-
     async function getCategories() {
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Category`, {
-            headers: {
-                "Authorization": "Bearer " + accessToken,
-            },
-        });
+        const response = await fetch(`${config.API_URL}/api/v1/Category`);
         setFormIsLoading(false);
 
         if (response.status === 200) {
@@ -53,7 +31,7 @@ function CategoryIndex() {
         const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "DELETE",
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
 
@@ -62,10 +40,10 @@ function CategoryIndex() {
         }
     }
 
-    if (isAuthorized === false) {
-        return "Unauthorized request"
-    } else if (isAuthorized === null) {
-        return "loading..."
+    if (auth.user === undefined) {
+        return "Loading...";
+    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
+        return "Unauthorized...";
     }
 
     return (
@@ -90,7 +68,7 @@ function CategoryIndex() {
                     {
                         formIsLoading &&
                         <div className={"flex justify-center mb-2"}>
-                            <Spinner />
+                            <Spinner/>
                         </div>
                     }
 

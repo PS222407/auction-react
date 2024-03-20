@@ -1,8 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import Nav from "../Layout/Nav.jsx";
 import dayjs from "dayjs";
-import duration from 'dayjs/plugin/duration';
 import Countdown from "react-countdown";
 import InputMoney from "../Components/Inputs/InputMoney.jsx";
 import MoneyTransformer from "../Services/MoneyTransformer.js";
@@ -10,12 +9,13 @@ import {toast} from "react-toastify";
 import {HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
 import pling from "../assets/sounds/pling.mp3";
 import Spinner from "../Components/Spinner.jsx";
+import ConfigContext from "../provider/ConfigProvider.jsx";
+import {useAuth} from "../provider/AuthProvider.jsx";
 
 function AuctionPage() {
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const {id} = useParams();
-    const [config, setConfig] = useState("");
-    const [accessToken, setAccessToken] = useState();
-    const [isAuthorized, setIsAuthorized] = useState(null);
     const [auction, setAuction] = useState();
     const [isCompleted, setIsCompleted] = useState(false);
     const [price, setPrice] = useState();
@@ -24,23 +24,13 @@ function AuctionPage() {
     const [formIsLoading, setFormIsLoading] = useState(false);
 
     useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
+        if (config) {
+            getAuction();
         }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-        getConfig();
-
-        dayjs.extend(duration);
-    }, []);
+    }, [config]);
 
     useEffect(() => {
         if (config) {
-            getAuction();
-            getUserInfo();
-
             const newConnection = new HubConnectionBuilder()
                 .withUrl(`${config.API_URL}/api/mainHub`)
                 .configureLogging(LogLevel.Critical)
@@ -68,7 +58,6 @@ function AuctionPage() {
             connection.invoke("AddToAuctionGroup", {groupName})
 
             connection.on("ReceiveBids", (bidRequest) => {
-                console.log(bidRequest, auction)
                 new Audio(pling).play();
                 setAuction(auction => ({
                     ...auction,
@@ -76,6 +65,7 @@ function AuctionPage() {
                 }))
             });
         }
+
         startConnection();
 
         return () => {
@@ -94,17 +84,8 @@ function AuctionPage() {
         });
     }
 
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-        setIsAuthorized(response.status === 200);
-    }
-
     async function getAuction() {
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
-            headers: {
-                "Authorization": "Bearer " + accessToken,
-            },
-        });
+        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`);
 
         if (response.status === 200) {
             const data = await response.json();
@@ -114,14 +95,14 @@ function AuctionPage() {
 
     async function submitBid(e) {
         e.preventDefault();
-        if (isCompleted) return;
+        if (isCompleted || !auth.user) return;
 
         setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Bid`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify({
                 auctionId: auction.id,
@@ -155,7 +136,8 @@ function AuctionPage() {
                     <div className={"flex flex-col md:flex-row justify-between gap-y-3 md:gap-20"}>
                         <div className={"w-full"}>
                             <div>
-                                <img className={"w-full aspect-square object-cover md:w-96"} src={auction.product.imageUrl} alt={auction.product.name}/>
+                                <img className={"w-full aspect-square object-cover md:w-96"}
+                                     src={auction.product.imageUrl} alt={auction.product.name}/>
                             </div>
                             <div className={"font-bold text-xl"}>{auction.product.name}</div>
                             <div className={"mt-4"}>{auction.product.description}</div>
@@ -168,25 +150,31 @@ function AuctionPage() {
                             </div>
                             <div>
                                 {
-                                    isAuthorized === false ?
+                                    auth.user === null ?
                                         (
-                                            <Link to={"/login"} className={"py-4 block px-8 bg-yellow-500"}>Login to
-                                                place a bid</Link>
+                                            <Link to={"/login"} className={"py-4 block px-8 bg-yellow-500"}>
+                                                Login to place a bid
+                                            </Link>
                                         ) : (
                                             <form onSubmit={submitBid}>
                                                 {
                                                     formIsLoading &&
                                                     <div className={"flex justify-center mb-2"}>
-                                                        <Spinner />
+                                                        <Spinner/>
                                                     </div>
                                                 }
                                                 <div className={'flex flex-col md:flex-row'}>
                                                     <div className={"flex"}>
-                                                        <span className={"border border-black rounded text-4xl px-2"}>&euro;</span>
-                                                        <InputMoney disabled={isCompleted} name={'price'} label={'undefined'} defaultValue={price}
-                                                                          setValue={(value) => setPrice(value)}/>
+                                                        <span
+                                                            className={"border border-black rounded text-4xl px-2"}>&euro;</span>
+                                                        <InputMoney disabled={isCompleted} name={'price'}
+                                                                    label={'undefined'} defaultValue={price}
+                                                                    setValue={(value) => setPrice(value)}/>
                                                     </div>
-                                                    <button disabled={isCompleted} className={`py-2 px-8 ${isCompleted ? "bg-gray-100" : "bg-yellow-500"}`}>Place bid</button>
+                                                    <button disabled={isCompleted}
+                                                            className={`py-2 px-8 ${isCompleted ? "bg-gray-100" : "bg-yellow-500"}`}>
+                                                        Place bid
+                                                    </button>
                                                 </div>
                                             </form>
                                         )
