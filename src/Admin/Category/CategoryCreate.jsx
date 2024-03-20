@@ -1,43 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link, useNavigate} from "react-router-dom";
-import dayjs from "dayjs";
 import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function CategoryCreate() {
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const navigate = useNavigate();
-    const [config, setConfig] = useState("");
-    const [accessToken, setAccessToken] = useState();
-    const [isAuthorized, setIsAuthorized] = useState(null);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
         icon: '',
     });
-
-    useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
-
-    useEffect(() => {
-        if (config) {
-            getUserInfo();
-        }
-    }, [config]);
-
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-        setIsAuthorized(response.status === 200);
-    }
 
     function handleFormChange(value, name) {
         setCategoryForm(prevState => ({
@@ -58,7 +35,7 @@ function CategoryCreate() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(categoryForm),
         });
@@ -71,15 +48,12 @@ function CategoryCreate() {
             });
 
             return navigate("/admin/categories");
-        } else if (response.status === 401) {
-            setIsAuthorized(false);
         }
     }
-
-    if (isAuthorized === false) {
-        return "Unauthorized request"
-    } else if (isAuthorized === null) {
-        return "loading..."
+    if (auth.user === undefined) {
+        return "Loading...";
+    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
+        return "Unauthorized...";
     }
 
     return (

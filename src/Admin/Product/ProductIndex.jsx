@@ -1,45 +1,27 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
-import dayjs from "dayjs";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function ProductIndex() {
-    const [config, setConfig] = useState("");
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const [products, setProducts] = useState([]);
-    const [accessToken, setAccessToken] = useState();
-    const [isAuthorized, setIsAuthorized] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
-
-    useEffect(() => {
-        if (config) {
-            getUserInfo()
+        if (auth.user) {
             getProducts();
         }
-    }, [config]);
-
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-        setIsAuthorized(response.status === 200);
-    }
+    }, [auth.user]);
 
     async function getProducts() {
         setIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Product`, {
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
 
@@ -53,7 +35,7 @@ function ProductIndex() {
         const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "DELETE",
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
 
@@ -62,10 +44,10 @@ function ProductIndex() {
         }
     }
 
-    if (isAuthorized === false) {
-        return "Unauthorized request"
-    } else if (isAuthorized === null) {
-        return "loading..."
+    if (auth.user === undefined) {
+        return "Loading...";
+    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
+        return "Unauthorized...";
     }
 
     return (
@@ -90,7 +72,7 @@ function ProductIndex() {
                     {
                         isLoading &&
                         <div className={"flex justify-center mb-2"}>
-                            <Spinner />
+                            <Spinner/>
                         </div>
                     }
 
@@ -111,10 +93,12 @@ function ProductIndex() {
                                         <td>
                                             <Link to={`/admin/products/${product.id}/edit`}
                                                   className={"hover:underline cursor-pointer"}>
-                                                {product.name}
+                                                <div className={"truncate max-w-52"}>{product.name}</div>
                                             </Link>
                                         </td>
-                                        <td>{product.description}</td>
+                                        <td>
+                                            <div className={"truncate max-w-52"}>{product.description}</div>
+                                        </td>
                                         <td>
                                             <img className={"w-24 aspect-square object-contain"} src={product.imageUrl}
                                                  alt={product.name + "product image"}/>

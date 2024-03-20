@@ -1,45 +1,28 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import dayjs from "dayjs";
 import AdminNav from "../AdminNav.jsx";
 import {Link} from "react-router-dom";
 import Spinner from "../../Components/Spinner.jsx";
+import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function AuctionIndex() {
-    const [config, setConfig] = useState("");
+    const config = useContext(ConfigContext);
+    const auth = useAuth();
     const [auctions, setAuctions] = useState([]);
-    const [accessToken, setAccessToken] = useState();
-    const [isAuthorized, setIsAuthorized] = useState(null);
     const [formIsLoading, setFormIsLoading] = useState(true);
 
     useEffect(() => {
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
-
-    useEffect(() => {
-        if (config) {
-            getUserInfo();
+        if (config && auth.user) {
             getAuctions();
         }
-    }, [config]);
-
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-        setIsAuthorized(response.status === 200);
-    }
+    }, [config, auth.user]);
 
     async function getAuctions() {
         setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Auction`, {
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
         setFormIsLoading(false);
@@ -53,7 +36,7 @@ function AuctionIndex() {
         const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "DELETE",
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + auth.user.accessToken,
             },
         });
 
@@ -62,15 +45,14 @@ function AuctionIndex() {
         }
     }
 
-    if (isAuthorized === false) {
-        return "Unauthorized request"
-    } else if (isAuthorized === null) {
-        return "loading..."
+    if (auth.user === undefined) {
+        return "Loading...";
+    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
+        return "Unauthorized...";
     }
 
     return (
         <>
-
             <AdminNav/>
 
             <div className="p-4 sm:ml-64">

@@ -1,33 +1,23 @@
-import React, {useEffect, useState} from 'react';
-
+import React, {useContext, useEffect, useState} from 'react';
 import {Collapse, Dropdown, initTWE} from "tw-elements";
-import {Link} from "react-router-dom";
-import dayjs from "dayjs";
+import {Link, useNavigate} from "react-router-dom";
+import ConfigContext from "../provider/ConfigProvider.jsx";
+import {useAuth} from "../provider/AuthProvider.jsx";
 
 function Nav() {
-    const [config, setConfig] = useState("");
-    const [accessToken, setAccessToken] = useState("");
-    const [isAuthorized, setIsAuthorized] = useState(null);
+    const auth = useAuth();
+    const navigate = useNavigate();
+    const config = useContext(ConfigContext);
     const [categories, setCategories] = useState();
-    const [roles, setRoles] = useState();
 
     useEffect(() => {
         initTWE({Collapse, Dropdown});
 
-        if (localStorage.getItem("auth") && dayjs(JSON.parse(localStorage.getItem("auth")).expiresAt) > dayjs()) {
-            setAccessToken(JSON.parse(localStorage.getItem("auth")).accessToken);
-        }
-
-        async function getConfig() {
-            setConfig(await fetch('/config.json').then((res) => res.json()));
-        }
-
-        getConfig();
-    }, []);
+        // reload the page to get the latest user data
+    }, [auth.user]);
 
     useEffect(() => {
         if (config) {
-            getUserInfo();
             getCategories();
         }
     }, [config]);
@@ -40,16 +30,7 @@ function Nav() {
         }
     }
 
-    async function getUserInfo() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {headers: {"Authorization": "Bearer " + accessToken}});
-
-        setIsAuthorized(response.status === 200);
-
-        if (response.status === 200) {
-            setRoles(await response.json());
-        }
-    }
-
+    console.log(auth.user)
     return (
         <>
             <nav style={{backgroundColor: '#FDA700'}}
@@ -82,7 +63,9 @@ function Nav() {
                         id="navbarSupportedContent1"
                         data-twe-collapse-item="">
                         <Link to={`/`}
-                              className={'mb-4 me-5 ms-2 mt-3 flex items-center text-white font-bold lg:mb-0 lg:mt-0'}>{config.APP_NAME}</Link>
+                              className={'mb-4 me-5 ms-2 mt-3 flex items-center text-white font-bold lg:mb-0 lg:mt-0'}>
+                            {config?.APP_NAME}
+                        </Link>
                         <ul
                             className="list-style-none me-auto flex flex-col ps-0 lg:flex-row"
                             data-twe-navbar-nav-ref="">
@@ -154,7 +137,7 @@ function Nav() {
                                 aria-labelledby="dropdownMenuButton2"
                                 data-twe-dropdown-menu-ref="">
                                 {
-                                    isAuthorized === false &&
+                                    !auth.user &&
                                     <>
                                         <li>
                                             <Link
@@ -174,7 +157,7 @@ function Nav() {
                                     </>
                                 }
                                 {
-                                    isAuthorized === true &&
+                                    auth.user &&
                                     <li>
                                         <a className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
                                            href="/account"
@@ -184,7 +167,7 @@ function Nav() {
                                     </li>
                                 }
                                 {
-                                    roles && roles.includes("Admin") &&
+                                    auth.user && auth.user.roles.includes("Admin") &&
                                     <li>
                                         <Link
                                             className="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
@@ -194,16 +177,19 @@ function Nav() {
                                         </Link>
                                     </li>
                                 }
-                                <li>
-                                    <a onClick={() => {
-                                        localStorage.removeItem("auth");
-                                        window.location.reload();
-                                    }}
-                                       className="block cursor-pointer w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
-                                       data-twe-dropdown-item-ref="">
-                                        Logout
-                                    </a>
-                                </li>
+                                {
+                                    auth.user &&
+                                    <li>
+                                        <a onClick={async () => {
+                                            await auth.logout();
+                                            return navigate("/");
+                                        }}
+                                           className="block cursor-pointer w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25"
+                                           data-twe-dropdown-item-ref="">
+                                            Logout
+                                        </a>
+                                    </li>
+                                }
                             </ul>
                         </div>
                     </div>
