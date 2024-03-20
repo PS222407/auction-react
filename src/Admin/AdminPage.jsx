@@ -40,7 +40,7 @@ function AdminPage() {
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14">
-                    hello Admin
+                    Admin Dashboard
                 </div>
             </div>
         </>
