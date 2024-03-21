@@ -28,6 +28,8 @@ function CategoryEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setFormIsLoading(false);
 
@@ -61,6 +63,8 @@ function CategoryEdit() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(categoryForm),
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {

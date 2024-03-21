@@ -31,6 +31,8 @@ function ProductCreate() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {
@@ -66,6 +68,8 @@ function ProductCreate() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: formData,
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         setFormIsLoading(false);

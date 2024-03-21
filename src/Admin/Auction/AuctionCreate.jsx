@@ -13,9 +13,9 @@ function AuctionCreate() {
     const [products, setProducts] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
-        productId: '',
-        startDateTime: '',
-        durationInSeconds: '',
+        productId: 0,
+        startDateTime: undefined,
+        durationInSeconds: 0,
     });
 
     useEffect(() => {
@@ -29,6 +29,8 @@ function AuctionCreate() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {
@@ -54,6 +56,8 @@ function AuctionCreate() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(auctionForm),
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setFormIsLoading(false);
 

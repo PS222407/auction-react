@@ -1,14 +1,15 @@
-import React, {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Collapse, Dropdown, initTWE} from "tw-elements";
 import {Link, useNavigate} from "react-router-dom";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {useAuth} from "../provider/AuthProvider.jsx";
+import {toast} from "react-toastify";
 
 function Nav() {
+    const config = useContext(ConfigContext);
     const auth = useAuth();
     const navigate = useNavigate();
-    const config = useContext(ConfigContext);
-    const [categories, setCategories] = useState();
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
         initTWE({Collapse, Dropdown});
@@ -23,14 +24,15 @@ function Nav() {
     }, [config]);
 
     async function getCategories() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category`);
+        const response = await fetch(`${config.API_URL}/api/v1/Category`).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        });
 
         if (response.status === 200) {
             setCategories(await response.json());
         }
     }
 
-    console.log(auth.user)
     return (
         <>
             <nav style={{backgroundColor: '#FDA700'}}

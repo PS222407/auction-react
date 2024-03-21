@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {toast} from "react-toastify";
 
 function CategoryIndex() {
     const config = useContext(ConfigContext);
@@ -19,7 +20,9 @@ function CategoryIndex() {
 
     async function getCategories() {
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Category`);
+        const response = await fetch(`${config.API_URL}/api/v1/Category`).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        });
         setFormIsLoading(false);
 
         if (response.status === 200) {
@@ -33,9 +36,11 @@ function CategoryIndex() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             await getCategories();
         }
     }
