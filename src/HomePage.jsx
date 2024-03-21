@@ -2,6 +2,7 @@ import {useContext, useEffect, useState} from 'react';
 import Nav from "./Layout/Nav.jsx";
 import Category from "./Category.jsx";
 import ConfigContext from "./provider/ConfigProvider.jsx";
+import {toast} from "react-toastify";
 
 function HomePage() {
     const config = useContext(ConfigContext);
@@ -14,7 +15,9 @@ function HomePage() {
     }, [config]);
 
     async function getCategories() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category`);
+        const response = await fetch(`${config.API_URL}/api/v1/Category`).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        });
 
         if (response.status === 200) {
             setCategories(await response.json());

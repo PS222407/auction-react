@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {toast} from "react-toastify";
 
 function ProductIndex() {
     const config = useContext(ConfigContext);
@@ -23,6 +24,8 @@ function ProductIndex() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         setIsLoading(false);
@@ -37,6 +40,8 @@ function ProductIndex() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {

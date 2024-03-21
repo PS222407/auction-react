@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import {toast} from "react-toastify";
 
 const ConfigContext = createContext();
 
@@ -7,7 +8,9 @@ export const ConfigProvider = ({ children }) => {
 
     useEffect(() => {
         async function getConfig() {
-            const response = await fetch('/config.json');
+            const response = await fetch('/config.json').catch((error) => {
+                if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+            });
             const data = await response.json();
             setConfig(data);
         }

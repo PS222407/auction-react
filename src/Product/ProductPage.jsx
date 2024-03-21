@@ -4,6 +4,7 @@ import Nav from "../Layout/Nav.jsx";
 import dayjs from "dayjs";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import duration from 'dayjs/plugin/duration';
+import {toast} from "react-toastify";
 
 function ProductPage() {
     const config = useContext(ConfigContext);
@@ -19,7 +20,9 @@ function ProductPage() {
     }, [config]);
 
     async function getProduct() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`);
+        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        });
 
         if (response.status === 200) {
             const data = await response.json();

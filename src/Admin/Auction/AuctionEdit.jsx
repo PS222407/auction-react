@@ -15,9 +15,9 @@ function AuctionEdit() {
     const [products, setProducts] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
-        productId: '',
-        startDateTime: '',
-        durationInSeconds: '',
+        productId: 0,
+        startDateTime: undefined,
+        durationInSeconds: 0,
     });
 
     useEffect(() => {
@@ -32,6 +32,8 @@ function AuctionEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {
@@ -45,6 +47,8 @@ function AuctionEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setFormIsLoading(false);
 
@@ -74,6 +78,8 @@ function AuctionEdit() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(auctionForm),
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {
@@ -152,7 +158,7 @@ function AuctionEdit() {
                                 type={"datetime-local"}
                                 id={"startDateTime"}
                                 name={"startDateTime"}
-                                onChange={(e) => handleFormChange(e.target.value, "startDateTime")}
+                                onChange={(e) => handleFormChange(e.target.value !== "" ? e.target.value : undefined, "startDateTime")}
                             />
                         </div>
                         <div className={"flex flex-col"}>
@@ -169,7 +175,7 @@ function AuctionEdit() {
                             {
                                 formIsLoading &&
                                 <div className={"flex justify-center mb-2"}>
-                                    <Spinner />
+                                    <Spinner/>
                                 </div>
                             }
                             <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}

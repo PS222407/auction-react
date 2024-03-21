@@ -85,7 +85,9 @@ function AuctionPage() {
     }
 
     async function getAuction() {
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`);
+        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        });
 
         if (response.status === 200) {
             const data = await response.json();
@@ -97,6 +99,11 @@ function AuctionPage() {
         e.preventDefault();
         if (isCompleted || !auth.user) return;
 
+        let safePrice = (new MoneyTransformer()).moneyDB(price);
+        if (safePrice > 2147483647) {
+            safePrice = 2147483647;
+        }
+
         setFormIsLoading(true);
         const response = await fetch(`${config.API_URL}/api/v1/Bid`, {
             method: "POST",
@@ -106,18 +113,20 @@ function AuctionPage() {
             },
             body: JSON.stringify({
                 auctionId: auction.id,
-                priceInCents: (new MoneyTransformer()).moneyDB(price),
+                priceInCents: safePrice,
             }),
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setFormIsLoading(false);
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             toast("Updated successfully", {
                 type: "success",
                 position: "bottom-right"
             });
         } else if (response.status === 400) {
-            toast("Bid is too low", {
+            toast((await response.json()).message, {
                 type: "error",
                 position: "bottom-right"
             });

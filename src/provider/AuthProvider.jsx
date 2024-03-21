@@ -1,6 +1,7 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import dayjs from "dayjs";
 import ConfigContext from "./ConfigProvider.jsx";
+import {toast} from "react-toastify";
 
 const AuthContext = createContext();
 
@@ -22,6 +23,8 @@ export const AuthProvider = ({children}) => {
                 "Accept": "application/json",
             },
             body: JSON.stringify({email, password}),
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         const data = await response.json();
@@ -48,6 +51,8 @@ export const AuthProvider = ({children}) => {
             headers: {
                 "Authorization": "Bearer " + auth.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {
