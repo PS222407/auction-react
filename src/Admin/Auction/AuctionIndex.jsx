@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {toast} from "react-toastify";
 
 function AuctionIndex() {
     const config = useContext(ConfigContext);
@@ -24,6 +25,8 @@ function AuctionIndex() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setFormIsLoading(false);
 
@@ -38,6 +41,8 @@ function AuctionIndex() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
         if (response.status === 200) {

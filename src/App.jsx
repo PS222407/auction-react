@@ -19,6 +19,7 @@ import AuctionCreate from "./Admin/Auction/AuctionCreate.jsx";
 import AuctionPage from "./Auction/AuctionPage.jsx";
 import {ConfigProvider} from "./provider/ConfigProvider.jsx";
 import {AuthProvider} from "./provider/AuthProvider.jsx";
+import AccountPage from "./Account/AccountPage.jsx";
 
 function App() {
     return (
@@ -32,7 +33,8 @@ function App() {
                         <Route path="/register" element={<RegisterPage/>}/>
                         <Route path="/categories/:id" element={<CategoryPage/>}/>
                         <Route path="/products/:id" element={<ProductPage/>}/>
-                        <Route path={"/auctions/:id"} element={<AuctionPage/>}/>
+                        <Route path="/auctions/:id" element={<AuctionPage/>}/>
+                        <Route path="/account" element={<AccountPage/>}/>
 
                         {/*ADMIN*/}
                         <Route path="/admin" element={<AdminPage/>}/>
