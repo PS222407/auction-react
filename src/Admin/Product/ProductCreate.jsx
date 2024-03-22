@@ -14,9 +14,9 @@ function ProductCreate() {
     const [categories, setCategories] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [productForm, setProductForm] = useState({
-        name: '',
-        description: '',
-        image: '',
+        name: undefined,
+        description: undefined,
+        image: undefined,
         category: null,
     });
 
@@ -37,6 +37,8 @@ function ProductCreate() {
 
         if (response.status === 200) {
             setCategories(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -73,7 +75,7 @@ function ProductCreate() {
         });
 
         setFormIsLoading(false);
-        if (response.status === 200) {
+        if (response.status === 204) {
             toast("Created successfully", {
                 type: "success",
                 position: "bottom-right"
@@ -92,12 +94,14 @@ function ProductCreate() {
             })
         } else if (response.status === 400) {
             const data = await response.json();
-            setErrors(Object.values(data.errors))
+            setErrors(data)
 
             toast("Validation error", {
                 type: "error",
                 position: "bottom-right"
             })
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -117,7 +121,7 @@ function ProductCreate() {
 
                     {
                         errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error[0]}</p>
+                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
                         })
                     }
 
@@ -144,8 +148,7 @@ function ProductCreate() {
                         </div>
                         <div className={"flex flex-col"}>
                             <label htmlFor="description">Description</label>
-                            <input
-                                type={"text"}
+                            <textarea
                                 id={"description"}
                                 name={"description"}
                                 onChange={(e) => handleFormChange(e.target.value, "description")}

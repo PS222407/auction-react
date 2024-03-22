@@ -32,6 +32,8 @@ function AuctionIndex() {
 
         if (response.status === 200) {
             setAuctions(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -45,8 +47,11 @@ function AuctionIndex() {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             await getAuctions();
+            toast("Deleted successfully", {type: "success"})
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 

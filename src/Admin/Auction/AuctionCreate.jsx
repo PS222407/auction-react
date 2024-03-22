@@ -10,6 +10,7 @@ function AuctionCreate() {
     const config = useContext(ConfigContext);
     const auth = useAuth();
     const navigate = useNavigate();
+    const [errors, setErrors] = useState([]);
     const [products, setProducts] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
@@ -35,6 +36,8 @@ function AuctionCreate() {
 
         if (response.status === 200) {
             setProducts(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -61,13 +64,17 @@ function AuctionCreate() {
         });
         setFormIsLoading(false);
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             toast("Created successfully", {
                 type: "success",
                 position: "bottom-right"
             });
 
             return navigate("/admin/auctions");
+        } else if (response.status === 400) {
+            setErrors(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -84,6 +91,12 @@ function AuctionCreate() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 className={"text-4xl font-bold text-black"}>Create auction</h1>
+
+                    {
+                        errors && errors.map((error, index) => {
+                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
+                        })
+                    }
 
                     <br/>
 

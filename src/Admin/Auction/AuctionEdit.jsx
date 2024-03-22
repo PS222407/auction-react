@@ -38,6 +38,8 @@ function AuctionEdit() {
 
         if (response.status === 200) {
             setProducts(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -52,15 +54,21 @@ function AuctionEdit() {
         });
         setFormIsLoading(false);
 
-        const data = await response.json();
-        setAuctionForm({
-            durationInSeconds: data.durationInSeconds,
-            startDateTime: data.startDateTime,
-            productId: data.product.id
-        })
+        if (response.status === 200) {
+            const data = await response.json();
+            setAuctionForm({
+                durationInSeconds: data.durationInSeconds,
+                startDateTime: data.startDateTime,
+                productId: data.product.id
+            })
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
+        }
     }
 
     function handleFormChange(value, name) {
+        if (value === "" &&  name === "durationInSeconds") value = 0;
+
         setAuctionForm(prevState => ({
             ...prevState,
             [name]: value
@@ -82,7 +90,7 @@ function AuctionEdit() {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             toast("Updated successfully", {
                 type: "success",
                 position: "bottom-right"
@@ -95,13 +103,9 @@ function AuctionEdit() {
                 position: "bottom-right"
             })
         } else if (response.status === 400) {
-            const data = await response.json();
-            setErrors(Object.values(data.errors))
-
-            toast("Validation error", {
-                type: "error",
-                position: "bottom-right"
-            })
+            setErrors(await response.json())
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -121,7 +125,7 @@ function AuctionEdit() {
 
                     {
                         errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error[0]}</p>
+                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
                         })
                     }
 

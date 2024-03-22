@@ -10,6 +10,7 @@ function CategoryCreate() {
     const config = useContext(ConfigContext);
     const auth = useAuth();
     const navigate = useNavigate();
+    const [errors, setErrors] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
@@ -50,6 +51,10 @@ function CategoryCreate() {
             });
 
             return navigate("/admin/categories");
+        } else if (response.status === 400) {
+            setErrors(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
     if (auth.user === undefined) {
@@ -65,6 +70,12 @@ function CategoryCreate() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 className={"text-4xl font-bold text-black"}>Create category</h1>
+
+                    {
+                        errors && errors.map((error, index) => {
+                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
+                        })
+                    }
 
                     <br/>
 

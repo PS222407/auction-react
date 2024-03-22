@@ -11,16 +11,17 @@ function CategoryEdit() {
     const auth = useAuth();
     const navigate = useNavigate();
     const {id} = useParams();
+    const [errors, setErrors] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
     });
 
     useEffect(() => {
-        if (config) {
+        if (auth.user) {
             getCategory();
         }
-    }, [config]);
+    }, [auth.user]);
 
     async function getCategory() {
         setFormIsLoading(true)
@@ -33,12 +34,14 @@ function CategoryEdit() {
         });
         setFormIsLoading(false);
 
-        if (response.status === 204) {
-            const categoryFromApi = await response.json();
+        if (response.status === 200) {
+            const data = await response.json();
             setCategoryForm({
-                name: categoryFromApi.name,
-                icon: categoryFromApi.icon,
+                name: data.name,
+                icon: data.icon,
             })
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -67,13 +70,17 @@ function CategoryEdit() {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             toast("Updated successfully", {
                 type: "success",
                 position: "bottom-right"
             });
 
             return navigate("/admin/categories");
+        } else if (response.status === 400) {
+            setErrors(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -90,6 +97,12 @@ function CategoryEdit() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 className={"text-4xl font-bold text-black"}>Edit Category</h1>
+
+                    {
+                        errors && errors.map((error, index) => {
+                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
+                        })
+                    }
 
                     <br/>
 

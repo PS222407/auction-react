@@ -40,6 +40,8 @@ function ProductEdit() {
 
         if (response.status === 200) {
             setCategories(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -52,16 +54,21 @@ function ProductEdit() {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
-        const data = await response.json();
-        setProductForm({
-            name: data.name,
-            description: data.description,
-            imageUrl: data.imageUrl,
-            category: data.category.id,
-        })
+        if (response.status === 200) {
+            const data = await response.json();
+            setProductForm({
+                name: data.name,
+                description: data.description,
+                imageUrl: data.imageUrl,
+                category: data.category.id,
+            })
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
+        }
     }
 
     function handleFormChange(value, name) {
+        console.log(value, name)
         setProductForm(prevState => ({
             ...prevState,
             [name]: value
@@ -94,7 +101,7 @@ function ProductEdit() {
         });
 
         setFormIsLoading(false);
-        if (response.status === 200) {
+        if (response.status === 204) {
             toast("Updated successfully", {
                 type: "success",
                 position: "bottom-right"
@@ -113,12 +120,14 @@ function ProductEdit() {
             })
         } else if (response.status === 400) {
             const data = await response.json();
-            setErrors(Object.values(data.errors))
+            setErrors(data)
 
             toast("Validation error", {
                 type: "error",
                 position: "bottom-right"
             })
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -138,7 +147,7 @@ function ProductEdit() {
 
                     {
                         errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error[0]}</p>
+                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
                         })
                     }
 
@@ -167,7 +176,7 @@ function ProductEdit() {
                         <div className={"flex flex-col"}>
                             <label htmlFor="description">Description</label>
                             <textarea
-                                defaultValue={productForm.description}
+                                value={productForm.description}
                                 id={"description"}
                                 name={"description"}
                                 onChange={(e) => handleFormChange(e.target.value, "description")}

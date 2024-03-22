@@ -27,6 +27,8 @@ function ProductPage() {
         if (response.status === 200) {
             const data = await response.json();
             setProduct(data)
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 

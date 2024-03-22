@@ -31,6 +31,8 @@ function ProductIndex() {
         setIsLoading(false);
         if (response.status === 200) {
             setProducts(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -44,8 +46,11 @@ function ProductIndex() {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
-        if (response.status === 200) {
+        if (response.status === 204) {
+            toast("Deleted successfully", {type: "success"})
             await getProducts();
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
