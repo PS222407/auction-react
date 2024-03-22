@@ -24,6 +24,8 @@ function CategoryPage() {
         if (response.status === 200) {
             const data = await response.json();
             setCategory(data);
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 

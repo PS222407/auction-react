@@ -21,6 +21,8 @@ function HomePage() {
 
         if (response.status === 200) {
             setCategories(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 

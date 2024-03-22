@@ -29,6 +29,8 @@ function AccountPage() {
         if (response.status === 200) {
             const data = await response.json();
             setAuctions(data)
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
