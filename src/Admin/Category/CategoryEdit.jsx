@@ -33,7 +33,7 @@ function CategoryEdit() {
         });
         setFormIsLoading(false);
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             const categoryFromApi = await response.json();
             setCategoryForm({
                 name: categoryFromApi.name,

@@ -43,7 +43,7 @@ function CategoryCreate() {
         });
         setFormIsLoading(false);
 
-        if (response.status === 200) {
+        if (response.status === 204) {
             toast("Created successfully", {
                 type: "success",
                 position: "bottom-right"
