@@ -63,6 +63,8 @@ function RegisterPage() {
                 type: "error",
                 position: "bottom-right"
             })
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 

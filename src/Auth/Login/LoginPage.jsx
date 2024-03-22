@@ -5,15 +5,15 @@ import Nav from "../../Layout/Nav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {toast} from "react-toastify";
 
 function LoginPage() {
     const navigate = useNavigate();
-    const config = useContext(ConfigContext);
     const auth = useAuth();
     const [loginIsLoading, setLoginIsLoading] = useState(false);
     const [loginFormData, setLoginFormData] = useState({
-        email: "",
-        password: "",
+        email: undefined,
+        password: undefined,
     });
 
     useEffect(() => {
@@ -30,23 +30,23 @@ function LoginPage() {
     async function handleLogin(e) {
         e.preventDefault();
 
-        await auth.login(loginFormData.email, loginFormData.password);
+        setLoginIsLoading(true);
+        const [response, data] = await auth.login(loginFormData.email, loginFormData.password);
+        setLoginIsLoading(false);
 
-        // toast(Object.values(data.errors)[0][0], {
-        //     type: "error",
-        //     position: "bottom-right"
-        // })
-        // toast("Login successful", {
-        //     type: "success",
-        //     position: "bottom-right"
-        // })
-
-        return navigate("/");
+        if (response.status === 200) {
+            toast("Login successful", {type: "success"})
+            return navigate("/");
+        } else if (response.status === 401) {
+            toast(data.title, {type: "error"})
+        } else if (response.status === 500) {
+            toast(data.message, {type: "error"})
+        }
     }
 
     return (
         <>
-            <Nav />
+            <Nav/>
             <section className="mx-4 xl:mx-auto max-w-screen-xl pt-10">
                 <div className="">
                     <div className="flex h-full flex-wrap items-center justify-center lg:justify-between">
@@ -96,7 +96,7 @@ function LoginPage() {
                                     {
                                         loginIsLoading &&
                                         <div className={"flex justify-center mb-2"}>
-                                            <Spinner />
+                                            <Spinner/>
                                         </div>
                                     }
 

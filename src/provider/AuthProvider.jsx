@@ -38,6 +38,8 @@ export const AuthProvider = ({children}) => {
 
             await getUser();
         }
+
+        return [response, data];
     }
 
     async function getUser() {
@@ -68,7 +70,6 @@ export const AuthProvider = ({children}) => {
     }
 
     async function logout() {
-        localStorage.removeItem("auth");
         localStorage.removeItem("auth");
         setUser(null);
     }

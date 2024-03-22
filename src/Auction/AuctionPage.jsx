@@ -92,6 +92,8 @@ function AuctionPage() {
         if (response.status === 200) {
             const data = await response.json();
             setAuction(data)
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -126,10 +128,12 @@ function AuctionPage() {
                 position: "bottom-right"
             });
         } else if (response.status === 400) {
-            toast((await response.json()).message, {
+            toast((await response.json())[0].errorMessage, {
                 type: "error",
                 position: "bottom-right"
             });
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 

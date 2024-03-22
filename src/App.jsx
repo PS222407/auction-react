@@ -26,7 +26,7 @@ function App() {
         <ConfigProvider>
             <AuthProvider>
                 <BrowserRouter>
-                    <ToastContainer/>
+                    <ToastContainer stacked position={"bottom-right"} />
                     <Routes>
                         <Route path="/" element={<HomePage/>}/>
                         <Route path="/login" element={<LoginPage/>}/>

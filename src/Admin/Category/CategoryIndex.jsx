@@ -27,6 +27,8 @@ function CategoryIndex() {
 
         if (response.status === 200) {
             setCategories(await response.json());
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -42,6 +44,9 @@ function CategoryIndex() {
 
         if (response.status === 204) {
             await getCategories();
+            toast("Deleted successfully", {type: "success"})
+        } else if (response.status === 500) {
+            toast((await response.json()).message, {type: "error"})
         }
     }
 
