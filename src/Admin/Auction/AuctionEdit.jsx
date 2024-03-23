@@ -28,20 +28,20 @@ function AuctionEdit() {
     }, [config, auth.user]);
 
     async function getProducts() {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
         }, auth.user);
 
         if (response.status === 200) {
-            setProducts(await response.json());
+            setProducts(data);
         }
     }
 
     async function getAuction() {
         setFormIsLoading(true)
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -49,7 +49,6 @@ function AuctionEdit() {
         setFormIsLoading(false);
 
         if (response.status === 200) {
-            const data = await response.json();
             setAuctionForm({
                 durationInSeconds: data.durationInSeconds,
                 startDateTime: data.startDateTime,
@@ -70,7 +69,7 @@ function AuctionEdit() {
     async function postEditAuction(e) {
         e.preventDefault();
 
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "PUT",
             headers: {
                 "Accept": "application/json",
@@ -80,12 +79,9 @@ function AuctionEdit() {
             body: JSON.stringify(auctionForm),
         }, auth.user);
 
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Updated successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
-
+            toast("Updated successfully", {type: "success"});
             return navigate("/admin/auctions");
         }
     }

@@ -52,12 +52,9 @@ function RegisterPage() {
         })
 
         setIsLoadingRegister(false);
-        setErrors(response.status === 400 ? data : []);
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Registered successfully", {
-                type: "success",
-                position: "bottom-right"
-            })
+            toast("Registered successfully", {type: "success"})
             return navigate("/login");
         }
     }
