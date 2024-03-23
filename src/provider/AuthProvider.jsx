@@ -77,7 +77,7 @@ export const AuthProvider = ({children}) => {
              if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
          });
 
-        const data = response.status !== 204 ? await response.json() : null;
+        const data = ![204, 404].includes(response.status) ? await response.json() : null;
 
         if (response.status === 403) {
             toast("Unauthorized", {type: "error"})
