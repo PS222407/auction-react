@@ -32,7 +32,7 @@ function CategoryCreate() {
 
     async function postCreateCategory() {
         setFormIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -42,17 +42,13 @@ function CategoryCreate() {
         }, auth.user);
         setFormIsLoading(false);
 
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Created successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
-
+            toast("Created successfully", {type: "success"});
             return navigate("/admin/categories");
-        } else if (response.status === 400) {
-            setErrors(await response.json());
         }
     }
+
     if (auth.user === undefined) {
         return "Loading...";
     } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {

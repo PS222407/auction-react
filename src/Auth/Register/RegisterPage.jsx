@@ -38,7 +38,7 @@ function RegisterPage() {
         }
 
         setIsLoadingRegister(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/register`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -51,8 +51,6 @@ function RegisterPage() {
             }),
         })
 
-        const data = response.status !== 204 ? await response.json() : null;
-
         setIsLoadingRegister(false);
         setErrors(response.status === 400 ? data : []);
         if (response.status === 204) {
@@ -61,8 +59,6 @@ function RegisterPage() {
                 position: "bottom-right"
             })
             return navigate("/login");
-        } else if (response.status === 500) {
-            toast(data.message, {type: "error"})
         }
     }
 

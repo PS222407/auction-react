@@ -65,8 +65,6 @@ function AuctionCreate() {
             });
 
             return navigate("/admin/auctions");
-        } else if (response.status === 400) {
-            setErrors(await response.json());
         }
     }
 

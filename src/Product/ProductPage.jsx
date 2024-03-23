@@ -25,11 +25,10 @@ function ProductPage() {
 
     async function getProduct() {
         setIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`)
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`)
         setIsLoading(false);
 
         if (response.status === 200) {
-            const data = await response.json();
             setProduct(data)
         }
     }

@@ -87,13 +87,6 @@ function AuctionEdit() {
             });
 
             return navigate("/admin/auctions");
-        } else if (response.status === 401) {
-            toast("Unauthorized", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 400) {
-            setErrors(await response.json())
         }
     }
 

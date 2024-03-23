@@ -87,11 +87,10 @@ function AuctionPage() {
 
     async function getAuction() {
         setIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`)
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`)
         setIsLoading(false);
 
         if (response.status === 200) {
-            const data = await response.json();
             setAuction(data)
         }
     }
@@ -104,9 +103,10 @@ function AuctionPage() {
         if (safePrice > 2147483647) {
             safePrice = 2147483647;
         }
+        safePrice = !safePrice ? undefined : safePrice;
 
         setFormIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Bid`, {
+        const [response] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Bid`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -120,15 +120,7 @@ function AuctionPage() {
         setFormIsLoading(false);
 
         if (response.status === 204) {
-            toast("Updated successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
-        } else if (response.status === 400) {
-            toast((await response.json())[0].errorMessage, {
-                type: "error",
-                position: "bottom-right"
-            });
+            toast("Bid successfully", {type: "success"});
         }
     }
 

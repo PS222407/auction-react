@@ -73,24 +73,27 @@ export const AuthProvider = ({children}) => {
             options.headers.Authorization = "Bearer " + accessToken;
         }
 
-        return fetch(url, options)
-            .then((response) => {
-                if (response.status === 403) {
-                    toast("Unauthorized", {type: "error"})
-                } else if (response.status === 401) {
-                    toast("Unauthorized", {type: "error"})
-                } else if (response.status === 500) {
-                    toast("Server error", {type: "error"})
-                } else if (response.status === 404) {
-                    toast("Not found", {type: "error"})
-                }
+         const response = await fetch(url, options).catch((error) => {
+             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+         });
 
-                return response;
-            })
-            .catch((error) => {
-                console.log(error, error.message)
-                if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-            });
+        const data = response.status !== 204 ? await response.json() : null;
+
+        if (response.status === 403) {
+            toast("Unauthorized", {type: "error"})
+        } else if (response.status === 401) {
+            toast("Unauthorized", {type: "error"})
+        } else if (response.status === 500) {
+            toast("Server error", {type: "error"})
+        } else if (response.status === 404) {
+            toast("Not found", {type: "error"})
+        } else if (response.status === 413) {
+            toast("File is too large", {type: "error"})
+        } else if (response.status === 400) {
+            toast(data.message ?? data.errors[0].errorMessage, {type: "error"});
+        }
+
+        return [response, data];
     }
 
     async function getAccessTokenRefreshIfNeeded(user) {

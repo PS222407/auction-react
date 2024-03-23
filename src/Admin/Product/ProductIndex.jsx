@@ -20,20 +20,20 @@ function ProductIndex() {
 
     async function getProducts() {
         setIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }, auth.user)
+        }, auth.user);
 
         setIsLoading(false);
         if (response.status === 200) {
-            setProducts(await response.json());
+            setProducts(data);
         }
     }
 
     async function handleDeleteProduct(id) {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`, {
+        const [response] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,

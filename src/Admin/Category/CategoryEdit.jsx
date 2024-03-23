@@ -25,7 +25,7 @@ function CategoryEdit() {
 
     async function getCategory() {
         setFormIsLoading(true)
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -33,7 +33,6 @@ function CategoryEdit() {
         setFormIsLoading(false);
 
         if (response.status === 200) {
-            const data = await response.json();
             setCategoryForm({
                 name: data.name,
                 icon: data.icon,
@@ -55,7 +54,7 @@ function CategoryEdit() {
     }
 
     async function postEditCategory() {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -64,15 +63,11 @@ function CategoryEdit() {
             body: JSON.stringify(categoryForm),
         }, auth.user);
 
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Updated successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
+            toast("Updated successfully", {type: "success"});
 
             return navigate("/admin/categories");
-        } else if (response.status === 400) {
-            setErrors(await response.json());
         }
     }
 

@@ -20,16 +20,16 @@ function CategoryIndex() {
 
     async function getCategories() {
         setFormIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
         setFormIsLoading(false);
 
         if (response.status === 200) {
-            setCategories(await response.json());
+            setCategories(data);
         }
     }
 
     async function handleDeleteCategory(id) {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
+        const [response] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,

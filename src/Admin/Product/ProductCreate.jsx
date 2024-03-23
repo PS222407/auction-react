@@ -27,14 +27,14 @@ function ProductCreate() {
     }, [auth.user]);
 
     async function getCategories() {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
         }, auth.user);
 
         if (response.status === 200) {
-            setCategories(await response.json());
+            setCategories(data);
         }
     }
 
@@ -60,7 +60,7 @@ function ProductCreate() {
         productForm.category && formData.append('CategoryId', productForm.category);
 
         setFormIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
@@ -69,31 +69,11 @@ function ProductCreate() {
         }, auth.user);
 
         setFormIsLoading(false);
+
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Created successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
-
+            toast("Created successfully", {type: "success"});
             return navigate("/admin/products");
-        } else if (response.status === 401) {
-            toast("Unauthorized", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 413) {
-            toast("File is too large", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 400) {
-            const data = await response.json();
-            setErrors(data)
-
-            toast("Validation error", {
-                type: "error",
-                position: "bottom-right"
-            })
         }
     }
 

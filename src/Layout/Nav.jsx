@@ -3,7 +3,6 @@ import {Collapse, Dropdown, initTWE} from "tw-elements";
 import {Link, useNavigate} from "react-router-dom";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {useAuth} from "../provider/AuthProvider.jsx";
-import {toast} from "react-toastify";
 
 function Nav() {
     const config = useContext(ConfigContext);
@@ -24,10 +23,10 @@ function Nav() {
     }, [config]);
 
     async function getCategories() {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
 
         if (response.status === 200) {
-            setCategories(await response.json());
+            setCategories(data);
         }
     }
 

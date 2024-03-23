@@ -16,14 +16,13 @@ function AccountPage() {
     }, [auth.user]);
 
     async function getWonAuctions() {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/User/Auctions/Won`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/User/Auctions/Won`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
         }, auth.user);
 
         if (response.status === 200) {
-            const data = await response.json();
             setAuctions(data)
         }
     }
