@@ -4,9 +4,11 @@ import Category from "./Category.jsx";
 import ConfigContext from "./provider/ConfigProvider.jsx";
 import {toast} from "react-toastify";
 import fetchWithIntercept from "./Services/fetchWithIntercept.js";
+import Spinner from "./Components/Spinner.jsx";
 
 function HomePage() {
     const config = useContext(ConfigContext);
+    const [isLoading, setIsLoading] = useState(false);
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -16,10 +18,13 @@ function HomePage() {
     }, [config]);
 
     async function getCategories() {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        setIsLoading(true);
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
+            .catch((error) => {
+                if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+            });
 
+        setIsLoading(false);
         if (response.status === 200) {
             setCategories(await response.json());
         } else if (response.status === 500) {
@@ -29,13 +34,16 @@ function HomePage() {
 
     return (
         <>
-            <Nav />
+            <Nav/>
 
             <div className={"mx-4 2xl:mx-auto max-w-screen-2xl mt-10"}>
+                {
+                    isLoading && <div className={"flex justify-center"}><Spinner/></div>
+                }
                 <div className={"flex flex-col sm:flex-row gap-4"}>
                     {
                         categories.map((category) => (
-                            <Category key={category.id} category={category} />
+                            <Category key={category.id} category={category}/>
                         ))
                     }
                 </div>

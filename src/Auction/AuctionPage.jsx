@@ -23,6 +23,7 @@ function AuctionPage() {
     const [connection, setConnection] = useState();
     const wsStarted = useRef(false);
     const [formIsLoading, setFormIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (config) {
@@ -86,9 +87,11 @@ function AuctionPage() {
     }
 
     async function getAuction() {
+        setIsLoading(true);
         const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
+        setIsLoading(false);
 
         if (response.status === 200) {
             const data = await response.json();
@@ -142,7 +145,9 @@ function AuctionPage() {
         <div>
             <Nav/>
 
-            {/*<button onClick={stopConn} className={"p-3 bg-red-500"}>stop</button>*/}
+            {
+                isLoading && <div className={"flex justify-center"}><Spinner/></div>
+            }
 
             <div className={"mx-4 xl:mx-auto max-w-screen-xl mt-10"}>
                 {
@@ -200,7 +205,7 @@ function AuctionPage() {
                                         return (
                                             <div key={bid.id}
                                                  className={"bg-gray-200 rounded flex gap-x-4 justify-around py-1 w-full"}>
-                                                <div className={"truncate"}>{bid.user.name}</div>
+                                                <div className={"truncate"}>{bid.user.email}</div>
                                                 <div>{new Intl.NumberFormat('nl-NL', {
                                                     style: 'currency',
                                                     currency: 'EUR'

@@ -6,11 +6,13 @@ import ConfigContext from "../provider/ConfigProvider.jsx";
 import duration from 'dayjs/plugin/duration';
 import {toast} from "react-toastify";
 import fetchWithIntercept from "../Services/fetchWithIntercept.js";
+import Spinner from "../Components/Spinner.jsx";
 
 function ProductPage() {
     const config = useContext(ConfigContext);
     const {id} = useParams();
     const [product, setProduct] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (config) {
@@ -21,9 +23,11 @@ function ProductPage() {
     }, [config]);
 
     async function getProduct() {
+        setIsLoading(true);
         const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
+        setIsLoading(false);
 
         if (response.status === 200) {
             const data = await response.json();
@@ -36,6 +40,10 @@ function ProductPage() {
     return (
         <div>
             <Nav/>
+
+            {
+                isLoading && <div className={"flex justify-center"}><Spinner/></div>
+            }
 
             <div className={"mx-4 xl:mx-auto max-w-screen-xl mt-10"}>
                 {

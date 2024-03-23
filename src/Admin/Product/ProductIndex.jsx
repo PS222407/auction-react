@@ -25,7 +25,7 @@ function ProductIndex() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
+        }, auth.user).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 

@@ -5,11 +5,13 @@ import Product from "./Product.jsx";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {toast} from "react-toastify";
 import fetchWithIntercept from "../Services/fetchWithIntercept.js";
+import Spinner from "../Components/Spinner.jsx";
 
 function CategoryPage() {
     const config = useContext(ConfigContext);
     const {id} = useParams();
     const [category, setCategory] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (config) {
@@ -18,9 +20,11 @@ function CategoryPage() {
     }, [config]);
 
     async function getCategory() {
+        setIsLoading(true);
         const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
+        setIsLoading(false);
 
         if (response.status === 200) {
             const data = await response.json();
@@ -36,6 +40,9 @@ function CategoryPage() {
 
             <div className={"mx-4 2xl:mx-auto max-w-screen-2xl mt-10"}>
                 <h1 className={"text-2xl w-full text-center font-bold"}>{category?.name}</h1>
+                {
+                    isLoading && <div className={"flex justify-center"}><Spinner/></div>
+                }
                 <div className={"grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 xl:gap-4"}>
                     {
                         category && category.products.map((product) => (

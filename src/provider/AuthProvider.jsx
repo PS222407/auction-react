@@ -21,7 +21,7 @@ export const AuthProvider = ({children}) => {
     }, [config]);
 
     async function login(email, password) {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/Login`, {
+        const response = await fetch(`${config.API_URL}/api/Login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export const AuthProvider = ({children}) => {
         let decodedToken = jwtDecode(auth.accessToken);
         const user = {
             ...auth,
-            roles: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+            roles: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? [],
         };
         setUser(user);
         // } else if (response.status === 401) {
