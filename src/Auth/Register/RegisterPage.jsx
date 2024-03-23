@@ -49,9 +49,7 @@ function RegisterPage() {
                 email: registerFormData.email,
                 password: registerFormData.password,
             }),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        })
 
         const data = response.status !== 204 ? await response.json() : null;
 

@@ -34,14 +34,10 @@ function ProductEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
             setCategories(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -50,9 +46,7 @@ function ProductEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
             const data = await response.json();
@@ -62,8 +56,6 @@ function ProductEdit() {
                 imageUrl: data.imageUrl,
                 category: data.category.id,
             })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -95,9 +87,7 @@ function ProductEdit() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: formData,
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         setFormIsLoading(false);
         if (response.status === 204) {
@@ -125,8 +115,6 @@ function ProductEdit() {
                 type: "error",
                 position: "bottom-right"
             })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

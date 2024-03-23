@@ -30,14 +30,10 @@ function AuctionCreate() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
             setProducts(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -59,9 +55,7 @@ function AuctionCreate() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(auctionForm),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 204) {
@@ -73,8 +67,6 @@ function AuctionCreate() {
             return navigate("/admin/auctions");
         } else if (response.status === 400) {
             setErrors(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

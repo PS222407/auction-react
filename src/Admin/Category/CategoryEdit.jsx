@@ -29,9 +29,7 @@ function CategoryEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 200) {
@@ -40,8 +38,6 @@ function CategoryEdit() {
                 name: data.name,
                 icon: data.icon,
             })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -66,9 +62,7 @@ function CategoryEdit() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(categoryForm),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 204) {
             toast("Updated successfully", {
@@ -79,8 +73,6 @@ function CategoryEdit() {
             return navigate("/admin/categories");
         } else if (response.status === 400) {
             setErrors(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

@@ -22,16 +22,12 @@ function CategoryPage() {
 
     async function getCategory() {
         setIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`)
         setIsLoading(false);
 
         if (response.status === 200) {
             const data = await response.json();
             setCategory(data);
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

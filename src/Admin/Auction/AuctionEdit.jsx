@@ -32,14 +32,10 @@ function AuctionEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
             setProducts(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -49,9 +45,7 @@ function AuctionEdit() {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 200) {
@@ -61,8 +55,6 @@ function AuctionEdit() {
                 startDateTime: data.startDateTime,
                 productId: data.product.id
             })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -86,9 +78,7 @@ function AuctionEdit() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(auctionForm),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 204) {
             toast("Updated successfully", {
@@ -104,8 +94,6 @@ function AuctionEdit() {
             })
         } else if (response.status === 400) {
             setErrors(await response.json())
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

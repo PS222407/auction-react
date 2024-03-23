@@ -29,9 +29,7 @@ export const AuthProvider = ({children}) => {
                 "Accept": "application/json",
             },
             body: JSON.stringify({email, password}),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        })
 
         const data = await response.json();
 
@@ -89,8 +87,9 @@ export const AuthProvider = ({children}) => {
 
                 return response;
             })
-            .catch(error => {
-                throw error;
+            .catch((error) => {
+                console.log(error, error.message)
+                if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
             });
     }
 
@@ -106,11 +105,15 @@ export const AuthProvider = ({children}) => {
 
         console.log("isExpired", isExpired);
 
-        const apiurl = (await (await fetch('/config.json')).json()).API_URL;
+        const apiurl = (await (await fetch('/config.json').catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        })).json()).API_URL;
         const response = await fetch(`${apiurl}/api/Refresh`, {
             method: "POST",
             headers: {"Content-Type": "application/json", "Accept": "application/json"},
             body: JSON.stringify({refreshToken: user.refreshToken}),
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         })
 
         if (response.status === 200) {

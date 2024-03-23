@@ -25,16 +25,12 @@ function ProductPage() {
 
     async function getProduct() {
         setIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`)
         setIsLoading(false);
 
         if (response.status === 200) {
             const data = await response.json();
             setProduct(data)
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

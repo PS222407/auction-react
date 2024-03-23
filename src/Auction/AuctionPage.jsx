@@ -87,16 +87,12 @@ function AuctionPage() {
 
     async function getAuction() {
         setIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`)
         setIsLoading(false);
 
         if (response.status === 200) {
             const data = await response.json();
             setAuction(data)
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -120,9 +116,7 @@ function AuctionPage() {
                 auctionId: auction.id,
                 priceInCents: safePrice,
             }),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 204) {
@@ -135,8 +129,6 @@ function AuctionPage() {
                 type: "error",
                 position: "bottom-right"
             });
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

@@ -10,6 +10,8 @@ export const ConfigProvider = ({ children }) => {
         async function getConfig() {
             const response = await fetch('/config.json').catch((error) => {
                 if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+            }).catch((error) => {
+                if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
             });
             const data = await response.json();
             setConfig(data);

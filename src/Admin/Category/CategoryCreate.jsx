@@ -39,9 +39,7 @@ function CategoryCreate() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(categoryForm),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 204) {
@@ -53,8 +51,6 @@ function CategoryCreate() {
             return navigate("/admin/categories");
         } else if (response.status === 400) {
             setErrors(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
     if (auth.user === undefined) {
