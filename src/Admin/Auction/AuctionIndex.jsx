@@ -21,7 +21,7 @@ function AuctionIndex() {
 
     async function getAuctions() {
         setFormIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -29,12 +29,12 @@ function AuctionIndex() {
         setFormIsLoading(false);
 
         if (response.status === 200) {
-            setAuctions(await response.json());
+            setAuctions(data);
         }
     }
 
     async function handleDeleteAuction(id) {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const [response] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
