@@ -26,14 +26,14 @@ function AuctionCreate() {
     }, [config, auth.user]);
 
     async function getProducts() {
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
         }, auth.user);
 
         if (response.status === 200) {
-            setProducts(await response.json());
+            setProducts(data);
         }
     }
 
@@ -48,7 +48,7 @@ function AuctionCreate() {
         e.preventDefault();
 
         setFormIsLoading(true);
-        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -58,12 +58,9 @@ function AuctionCreate() {
         }, auth.user);
         setFormIsLoading(false);
 
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Created successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
-
+            toast("Created successfully", {type: "success"});
             return navigate("/admin/auctions");
         }
     }

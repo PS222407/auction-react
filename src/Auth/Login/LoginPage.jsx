@@ -34,7 +34,7 @@ function LoginPage() {
         const [response, data] = await auth.login(loginFormData.email, loginFormData.password);
         setLoginIsLoading(false);
 
-        setErrors(response.status === 400 ? data : []);
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 200) {
             toast("Login successful", {type: "success"})
             return navigate("/");
