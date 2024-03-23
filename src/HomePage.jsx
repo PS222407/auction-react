@@ -3,11 +3,12 @@ import Nav from "./Layout/Nav.jsx";
 import Category from "./Category.jsx";
 import ConfigContext from "./provider/ConfigProvider.jsx";
 import {toast} from "react-toastify";
-import fetchWithIntercept from "./Services/fetchWithIntercept.js";
 import Spinner from "./Components/Spinner.jsx";
+import {useAuth} from "./provider/AuthProvider.jsx";
 
 function HomePage() {
     const config = useContext(ConfigContext);
+    const auth = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [categories, setCategories] = useState([]);
 
@@ -19,7 +20,7 @@ function HomePage() {
 
     async function getCategories() {
         setIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
             .catch((error) => {
                 if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
             });

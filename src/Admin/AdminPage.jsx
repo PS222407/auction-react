@@ -4,8 +4,6 @@ import {useAuth} from "../provider/AuthProvider.jsx";
 function AdminPage() {
     const auth = useAuth();
 
-    console.log(auth.user)
-
     if (auth.user === undefined) {
         return "Loading...";
     } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {

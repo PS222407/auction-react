@@ -4,7 +4,6 @@ import {Link, useNavigate} from "react-router-dom";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {useAuth} from "../provider/AuthProvider.jsx";
 import {toast} from "react-toastify";
-import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 
 function Nav() {
     const config = useContext(ConfigContext);
@@ -25,7 +24,7 @@ function Nav() {
     }, [config]);
 
     async function getCategories() {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`).catch((error) => {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 

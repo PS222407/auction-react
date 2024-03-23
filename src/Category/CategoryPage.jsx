@@ -4,12 +4,13 @@ import {useParams} from "react-router-dom";
 import Product from "./Product.jsx";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {toast} from "react-toastify";
-import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 import Spinner from "../Components/Spinner.jsx";
+import {useAuth} from "../provider/AuthProvider.jsx";
 
 function CategoryPage() {
     const config = useContext(ConfigContext);
     const {id} = useParams();
+    const auth = useAuth();
     const [category, setCategory] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +22,7 @@ function CategoryPage() {
 
     async function getCategory() {
         setIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`).catch((error) => {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setIsLoading(false);

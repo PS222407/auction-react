@@ -5,12 +5,13 @@ import dayjs from "dayjs";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import duration from 'dayjs/plugin/duration';
 import {toast} from "react-toastify";
-import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 import Spinner from "../Components/Spinner.jsx";
+import {useAuth} from "../provider/AuthProvider.jsx";
 
 function ProductPage() {
     const config = useContext(ConfigContext);
     const {id} = useParams();
+    const auth = useAuth();
     const [product, setProduct] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +25,7 @@ function ProductPage() {
 
     async function getProduct() {
         setIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setIsLoading(false);

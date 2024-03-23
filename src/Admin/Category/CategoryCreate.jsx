@@ -5,7 +5,6 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
-import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function CategoryCreate() {
     const config = useContext(ConfigContext);
@@ -33,7 +32,7 @@ function CategoryCreate() {
 
     async function postCreateCategory() {
         setFormIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

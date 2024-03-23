@@ -5,7 +5,6 @@ import AdminNav from "../AdminNav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
-import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function AuctionCreate() {
     const config = useContext(ConfigContext);
@@ -27,7 +26,7 @@ function AuctionCreate() {
     }, [config, auth.user]);
 
     async function getProducts() {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -53,7 +52,7 @@ function AuctionCreate() {
         e.preventDefault();
 
         setFormIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

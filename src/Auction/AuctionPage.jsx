@@ -11,7 +11,6 @@ import pling from "../assets/sounds/pling.mp3";
 import Spinner from "../Components/Spinner.jsx";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {useAuth} from "../provider/AuthProvider.jsx";
-import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 
 function AuctionPage() {
     const config = useContext(ConfigContext);
@@ -88,7 +87,7 @@ function AuctionPage() {
 
     async function getAuction() {
         setIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`).catch((error) => {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setIsLoading(false);
@@ -111,7 +110,7 @@ function AuctionPage() {
         }
 
         setFormIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Bid`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Bid`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

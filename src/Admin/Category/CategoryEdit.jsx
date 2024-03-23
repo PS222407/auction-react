@@ -5,7 +5,6 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
-import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function CategoryEdit() {
     const config = useContext(ConfigContext);
@@ -26,7 +25,7 @@ function CategoryEdit() {
 
     async function getCategory() {
         setFormIsLoading(true)
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -60,7 +59,7 @@ function CategoryEdit() {
     }
 
     async function postEditCategory() {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

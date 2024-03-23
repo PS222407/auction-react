@@ -5,7 +5,6 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
-import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function ProductCreate() {
     const config = useContext(ConfigContext);
@@ -28,7 +27,7 @@ function ProductCreate() {
     }, [auth.user]);
 
     async function getCategories() {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -65,7 +64,7 @@ function ProductCreate() {
         productForm.category && formData.append('CategoryId', productForm.category);
 
         setFormIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,

@@ -6,7 +6,6 @@ import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {toast} from "react-toastify";
-import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function AuctionIndex() {
     const config = useContext(ConfigContext);
@@ -22,7 +21,7 @@ function AuctionIndex() {
 
     async function getAuctions() {
         setFormIsLoading(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -39,7 +38,7 @@ function AuctionIndex() {
     }
 
     async function handleDeleteAuction(id) {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,

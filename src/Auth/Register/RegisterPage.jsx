@@ -5,11 +5,12 @@ import {toast} from "react-toastify";
 import Nav from "../../Layout/Nav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
-import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function RegisterPage() {
     const navigate = useNavigate();
     const config = useContext(ConfigContext);
+    const auth = useAuth();
     const [errors, setErrors] = useState([]);
     const [isLoadingRegister, setIsLoadingRegister] = useState(false);
     const [registerFormData, setRegisterFormData] = useState({
@@ -37,7 +38,7 @@ function RegisterPage() {
         }
 
         setIsLoadingRegister(true);
-        const response = await fetchWithIntercept(`${config.API_URL}/api/register`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

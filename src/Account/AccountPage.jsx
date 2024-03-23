@@ -4,7 +4,6 @@ import ConfigContext from "../provider/ConfigProvider.jsx";
 import {useAuth} from "../provider/AuthProvider.jsx";
 import dayjs from "dayjs";
 import {toast} from "react-toastify";
-import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 
 function AccountPage() {
     const config = useContext(ConfigContext);
@@ -13,13 +12,12 @@ function AccountPage() {
 
     useEffect(() => {
         if (auth.user) {
-            console.log(auth.user)
             getWonAuctions();
         }
     }, [auth.user]);
 
     async function getWonAuctions() {
-        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/User/Auctions/Won`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/User/Auctions/Won`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
