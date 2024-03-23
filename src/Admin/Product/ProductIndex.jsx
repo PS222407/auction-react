@@ -20,37 +20,29 @@ function ProductIndex() {
 
     async function getProducts() {
         setIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Product`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         setIsLoading(false);
         if (response.status === 200) {
-            setProducts(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
+            setProducts(data);
         }
     }
 
     async function handleDeleteProduct(id) {
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
+        const [response] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 204) {
             toast("Deleted successfully", {type: "success"})
             await getProducts();
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

@@ -2,6 +2,10 @@ import {createContext, useContext, useEffect, useState} from "react";
 import dayjs from "dayjs";
 import ConfigContext from "./ConfigProvider.jsx";
 import {toast} from "react-toastify";
+import utc from 'dayjs/plugin/utc';
+import { jwtDecode } from "jwt-decode";
+
+dayjs.extend(utc);
 
 const AuthContext = createContext();
 
@@ -13,19 +17,19 @@ export const AuthProvider = ({children}) => {
         if (config) {
             getUser();
         }
+
+        dayjs.extend(utc);
     }, [config]);
 
     async function login(email, password) {
-        const response = await fetch(`${config.API_URL}/api/login`, {
+        const response = await fetch(`${config.API_URL}/api/Login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             },
             body: JSON.stringify({email, password}),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        })
 
         const data = await response.json();
 
@@ -33,7 +37,7 @@ export const AuthProvider = ({children}) => {
             localStorage.setItem("auth", JSON.stringify({
                 accessToken: data.accessToken,
                 refreshToken: data.refreshToken,
-                expiresAt: dayjs().add(data.expiresIn, 'second')
+                expiresAt: dayjs().utc().add(data.expiresIn, 'second')
             }));
 
             await getUser();
@@ -49,24 +53,12 @@ export const AuthProvider = ({children}) => {
             return;
         }
 
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {
-            headers: {
-                "Authorization": "Bearer " + auth.accessToken,
-            },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
-
-        if (response.status === 200) {
-            const data = await response.json();
-            const user = {
-                ...auth,
-                roles: data
-            };
-            setUser(user);
-        } else if (response.status === 401) {
-            setUser(null);
-        }
+        let decodedToken = jwtDecode(auth.accessToken);
+        const user = {
+            ...auth,
+            roles: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ?? [],
+        };
+        setUser(user);
     }
 
     async function logout() {
@@ -74,9 +66,79 @@ export const AuthProvider = ({children}) => {
         setUser(null);
     }
 
+    async function fetchWithIntercept(url, options, user = null)  {
+        let accessToken = await getAccessTokenRefreshIfNeeded(user);
+
+        if (options?.headers?.Authorization) {
+            options.headers.Authorization = "Bearer " + accessToken;
+        }
+
+         const response = await fetch(url, options).catch((error) => {
+             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+         });
+
+        const data = response.status !== 204 ? await response.json() : null;
+
+        if (response.status === 403) {
+            toast("Unauthorized", {type: "error"})
+        } else if (response.status === 401) {
+            toast("Unauthorized", {type: "error"})
+        } else if (response.status === 500) {
+            toast("Server error", {type: "error"})
+        } else if (response.status === 404) {
+            toast("Not found", {type: "error"})
+        } else if (response.status === 413) {
+            toast("File is too large", {type: "error"})
+        } else if (response.status === 400) {
+            toast(data.message ?? data.errors[0].errorMessage, {type: "error"});
+        }
+
+        return [response, data];
+    }
+
+    async function getAccessTokenRefreshIfNeeded(user) {
+        if (!user) {
+            return null;
+        }
+
+        const isExpired = dayjs().utc() > dayjs(user.expiresAt).utc().subtract(1, 'minute');
+        if (!isExpired) {
+            return user.accessToken;
+        }
+
+        console.log("isExpired", isExpired);
+
+        const apiurl = (await (await fetch('/config.json').catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        })).json()).API_URL;
+        const response = await fetch(`${apiurl}/api/Refresh`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: JSON.stringify({refreshToken: user.refreshToken}),
+        }).catch((error) => {
+            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        })
+
+        if (response.status === 200) {
+            const data = await response.json();
+
+            localStorage.setItem("auth", JSON.stringify({
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken,
+                expiresAt: dayjs().utc().add(data.expiresIn, 'second')
+            }));
+
+            await getUser();
+
+            return data.accessToken;
+        }
+
+        return null;
+    }
+
     return (
         <AuthContext.Provider
-            value={{login, logout, user}}>
+            value={{login, logout, user, fetchWithIntercept}}>
             {children}
         </AuthContext.Provider>
     );

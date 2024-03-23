@@ -28,30 +28,24 @@ function AuctionEdit() {
     }, [config, auth.user]);
 
     async function getProducts() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
             setProducts(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
     async function getAuction() {
         setFormIsLoading(true)
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 200) {
@@ -61,8 +55,6 @@ function AuctionEdit() {
                 startDateTime: data.startDateTime,
                 productId: data.product.id
             })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -78,7 +70,7 @@ function AuctionEdit() {
     async function postEditAuction(e) {
         e.preventDefault();
 
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "PUT",
             headers: {
                 "Accept": "application/json",
@@ -86,9 +78,7 @@ function AuctionEdit() {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(auctionForm),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 204) {
             toast("Updated successfully", {
@@ -97,15 +87,6 @@ function AuctionEdit() {
             });
 
             return navigate("/admin/auctions");
-        } else if (response.status === 401) {
-            toast("Unauthorized", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 400) {
-            setErrors(await response.json())
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

@@ -22,6 +22,7 @@ function AuctionPage() {
     const [connection, setConnection] = useState();
     const wsStarted = useRef(false);
     const [formIsLoading, setFormIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (config) {
@@ -85,15 +86,12 @@ function AuctionPage() {
     }
 
     async function getAuction() {
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        setIsLoading(true);
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`)
+        setIsLoading(false);
 
         if (response.status === 200) {
-            const data = await response.json();
             setAuction(data)
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -105,9 +103,10 @@ function AuctionPage() {
         if (safePrice > 2147483647) {
             safePrice = 2147483647;
         }
+        safePrice = !safePrice ? undefined : safePrice;
 
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Bid`, {
+        const [response] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Bid`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -117,23 +116,11 @@ function AuctionPage() {
                 auctionId: auction.id,
                 priceInCents: safePrice,
             }),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 204) {
-            toast("Updated successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
-        } else if (response.status === 400) {
-            toast((await response.json())[0].errorMessage, {
-                type: "error",
-                position: "bottom-right"
-            });
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
+            toast("Bid successfully", {type: "success"});
         }
     }
 
@@ -141,7 +128,9 @@ function AuctionPage() {
         <div>
             <Nav/>
 
-            {/*<button onClick={stopConn} className={"p-3 bg-red-500"}>stop</button>*/}
+            {
+                isLoading && <div className={"flex justify-center"}><Spinner/></div>
+            }
 
             <div className={"mx-4 xl:mx-auto max-w-screen-xl mt-10"}>
                 {
@@ -199,7 +188,7 @@ function AuctionPage() {
                                         return (
                                             <div key={bid.id}
                                                  className={"bg-gray-200 rounded flex gap-x-4 justify-around py-1 w-full"}>
-                                                <div className={"truncate"}>{bid.user.name}</div>
+                                                <div className={"truncate"}>{bid.user.email}</div>
                                                 <div>{new Intl.NumberFormat('nl-NL', {
                                                     style: 'currency',
                                                     currency: 'EUR'

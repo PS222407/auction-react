@@ -21,37 +21,29 @@ function AuctionIndex() {
 
     async function getAuctions() {
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Auction`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 200) {
             setAuctions(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
     async function handleDeleteAuction(id) {
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 204) {
             await getAuctions();
             toast("Deleted successfully", {type: "success"})
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
