@@ -2,6 +2,9 @@ import {createContext, useContext, useEffect, useState} from "react";
 import dayjs from "dayjs";
 import ConfigContext from "./ConfigProvider.jsx";
 import {toast} from "react-toastify";
+import utc from 'dayjs/plugin/utc';
+import { jwtDecode } from "jwt-decode";
+import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 
 const AuthContext = createContext();
 
@@ -13,10 +16,12 @@ export const AuthProvider = ({children}) => {
         if (config) {
             getUser();
         }
+
+        dayjs.extend(utc);
     }, [config]);
 
     async function login(email, password) {
-        const response = await fetch(`${config.API_URL}/api/login`, {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/Login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,7 +38,7 @@ export const AuthProvider = ({children}) => {
             localStorage.setItem("auth", JSON.stringify({
                 accessToken: data.accessToken,
                 refreshToken: data.refreshToken,
-                expiresAt: dayjs().add(data.expiresIn, 'second')
+                expiresAt: dayjs().utc().add(data.expiresIn, 'second')
             }));
 
             await getUser();
@@ -49,24 +54,25 @@ export const AuthProvider = ({children}) => {
             return;
         }
 
-        const response = await fetch(`${config.API_URL}/api/v1/User/info`, {
-            headers: {
-                "Authorization": "Bearer " + auth.accessToken,
-            },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        // const response = await fetchWithIntercept(`${config.API_URL}/api/v1/User/info`, {
+        //     headers: {
+        //         "Authorization": "Bearer " + auth.accessToken,
+        //     },
+        // }).catch((error) => {
+        //     if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
+        // });
 
-        if (response.status === 200) {
-            const data = await response.json();
-            const user = {
-                ...auth,
-                roles: data
-            };
-            setUser(user);
-        } else if (response.status === 401) {
-            setUser(null);
-        }
+        // if (response.status === 200) {
+        //     const data = await response.json();
+        let decodedToken = jwtDecode(auth.accessToken);
+        const user = {
+            ...auth,
+            roles: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+        };
+        setUser(user);
+        // } else if (response.status === 401) {
+        //     setUser(null);
+        // }
     }
 
     async function logout() {

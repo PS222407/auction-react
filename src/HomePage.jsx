@@ -3,6 +3,7 @@ import Nav from "./Layout/Nav.jsx";
 import Category from "./Category.jsx";
 import ConfigContext from "./provider/ConfigProvider.jsx";
 import {toast} from "react-toastify";
+import fetchWithIntercept from "./Services/fetchWithIntercept.js";
 
 function HomePage() {
     const config = useContext(ConfigContext);
@@ -15,7 +16,7 @@ function HomePage() {
     }, [config]);
 
     async function getCategories() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category`).catch((error) => {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 

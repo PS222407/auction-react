@@ -5,6 +5,7 @@ import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {toast} from "react-toastify";
+import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function ProductIndex() {
     const config = useContext(ConfigContext);
@@ -20,7 +21,7 @@ function ProductIndex() {
 
     async function getProducts() {
         setIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Product`, {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -37,7 +38,7 @@ function ProductIndex() {
     }
 
     async function handleDeleteProduct(id) {
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,

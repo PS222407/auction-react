@@ -5,6 +5,7 @@ import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {toast} from "react-toastify";
+import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function CategoryIndex() {
     const config = useContext(ConfigContext);
@@ -20,7 +21,7 @@ function CategoryIndex() {
 
     async function getCategories() {
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Category`).catch((error) => {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
         setFormIsLoading(false);
@@ -33,7 +34,7 @@ function CategoryIndex() {
     }
 
     async function handleDeleteCategory(id) {
-        const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,

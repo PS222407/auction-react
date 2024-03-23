@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import duration from 'dayjs/plugin/duration';
 import {toast} from "react-toastify";
+import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 
 function ProductPage() {
     const config = useContext(ConfigContext);
@@ -20,7 +21,7 @@ function ProductPage() {
     }, [config]);
 
     async function getProduct() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 

@@ -24,7 +24,7 @@ function Nav() {
     }, [config]);
 
     async function getCategories() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category`).catch((error) => {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 

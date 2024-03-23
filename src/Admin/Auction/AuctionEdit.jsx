@@ -5,6 +5,7 @@ import AdminNav from "../AdminNav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import fetchWithIntercept from "../../Services/fetchWithIntercept.js";
 
 function AuctionEdit() {
     const config = useContext(ConfigContext);
@@ -28,7 +29,7 @@ function AuctionEdit() {
     }, [config, auth.user]);
 
     async function getProducts() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product`, {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -45,7 +46,7 @@ function AuctionEdit() {
 
     async function getAuction() {
         setFormIsLoading(true)
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
@@ -78,7 +79,7 @@ function AuctionEdit() {
     async function postEditAuction(e) {
         e.preventDefault();
 
-        const response = await fetch(`${config.API_URL}/api/v1/Auction/${id}`, {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "PUT",
             headers: {
                 "Accept": "application/json",

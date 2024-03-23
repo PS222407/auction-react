@@ -1,15 +1,15 @@
-import {useContext, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {initTWE, Input, Ripple} from "tw-elements";
 import Nav from "../../Layout/Nav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
-import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {toast} from "react-toastify";
 
 function LoginPage() {
     const navigate = useNavigate();
     const auth = useAuth();
+    const [errors, setErrors] = useState([]);
     const [loginIsLoading, setLoginIsLoading] = useState(false);
     const [loginFormData, setLoginFormData] = useState({
         email: undefined,
@@ -34,6 +34,7 @@ function LoginPage() {
         const [response, data] = await auth.login(loginFormData.email, loginFormData.password);
         setLoginIsLoading(false);
 
+        setErrors(response.status === 400 ? data : []);
         if (response.status === 200) {
             toast("Login successful", {type: "success"})
             return navigate("/");
@@ -58,6 +59,12 @@ function LoginPage() {
                         <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
                             <form onSubmit={handleLogin}>
                                 <h1 className="mb-6 text-2xl font-bold text-center lg:text-left">Login</h1>
+
+                                {
+                                    errors && errors.map((error, index) => {
+                                        return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
+                                    })
+                                }
 
                                 <div className="relative mb-6" data-twe-input-wrapper-init="">
                                     <input

@@ -4,6 +4,7 @@ import {useParams} from "react-router-dom";
 import Product from "./Product.jsx";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {toast} from "react-toastify";
+import fetchWithIntercept from "../Services/fetchWithIntercept.js";
 
 function CategoryPage() {
     const config = useContext(ConfigContext);
@@ -17,7 +18,7 @@ function CategoryPage() {
     }, [config]);
 
     async function getCategory() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`).catch((error) => {
+        const response = await fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`).catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         });
 
