@@ -20,33 +20,25 @@ function CategoryIndex() {
 
     async function getCategories() {
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Category`).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`)
         setFormIsLoading(false);
 
         if (response.status === 200) {
-            setCategories(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
+            setCategories(data);
         }
     }
 
     async function handleDeleteCategory(id) {
-        const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
+        const [response] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 204) {
             await getCategories();
             toast("Deleted successfully", {type: "success"})
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

@@ -11,11 +11,6 @@ function Product({product}) {
                     </div>
                     <div className={"flex flex-col items-center"}>
                         <div>{product.name}</div>
-                        {/*<div>{product.stock}</div>*/}
-                        {/*<div>{new Intl.NumberFormat('nl-NL', {*/}
-                        {/*    style: 'currency',*/}
-                        {/*    currency: 'EUR'*/}
-                        {/*}).format(product.price / 100)}</div>*/}
                     </div>
                 </div>
             </div>

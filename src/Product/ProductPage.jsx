@@ -5,11 +5,15 @@ import dayjs from "dayjs";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import duration from 'dayjs/plugin/duration';
 import {toast} from "react-toastify";
+import Spinner from "../Components/Spinner.jsx";
+import {useAuth} from "../provider/AuthProvider.jsx";
 
 function ProductPage() {
     const config = useContext(ConfigContext);
     const {id} = useParams();
+    const auth = useAuth();
     const [product, setProduct] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (config) {
@@ -20,21 +24,22 @@ function ProductPage() {
     }, [config]);
 
     async function getProduct() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        setIsLoading(true);
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`)
+        setIsLoading(false);
 
         if (response.status === 200) {
-            const data = await response.json();
             setProduct(data)
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
     return (
         <div>
             <Nav/>
+
+            {
+                isLoading && <div className={"flex justify-center"}><Spinner/></div>
+            }
 
             <div className={"mx-4 xl:mx-auto max-w-screen-xl mt-10"}>
                 {

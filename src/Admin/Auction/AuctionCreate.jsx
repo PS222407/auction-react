@@ -26,18 +26,14 @@ function AuctionCreate() {
     }, [config, auth.user]);
 
     async function getProducts() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
             setProducts(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -52,16 +48,14 @@ function AuctionCreate() {
         e.preventDefault();
 
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Auction`, {
+        const response = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(auctionForm),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 204) {
@@ -71,10 +65,6 @@ function AuctionCreate() {
             });
 
             return navigate("/admin/auctions");
-        } else if (response.status === 400) {
-            setErrors(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

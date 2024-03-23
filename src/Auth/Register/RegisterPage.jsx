@@ -5,10 +5,13 @@ import {toast} from "react-toastify";
 import Nav from "../../Layout/Nav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
+import {useAuth} from "../../provider/AuthProvider.jsx";
 
 function RegisterPage() {
     const navigate = useNavigate();
     const config = useContext(ConfigContext);
+    const auth = useAuth();
+    const [errors, setErrors] = useState([]);
     const [isLoadingRegister, setIsLoadingRegister] = useState(false);
     const [registerFormData, setRegisterFormData] = useState({
         email: "",
@@ -35,7 +38,7 @@ function RegisterPage() {
         }
 
         setIsLoadingRegister(true);
-        const response = await fetch(`${config.API_URL}/api/register`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -46,25 +49,16 @@ function RegisterPage() {
                 email: registerFormData.email,
                 password: registerFormData.password,
             }),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        })
 
         setIsLoadingRegister(false);
-        if (response.status === 200) {
+        setErrors(response.status === 400 ? data : []);
+        if (response.status === 204) {
             toast("Registered successfully", {
                 type: "success",
                 position: "bottom-right"
             })
             return navigate("/login");
-        } else if (response.status === 400) {
-            const data = await response.json();
-            toast(Object.values(data.errors)[0][0], {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -82,6 +76,12 @@ function RegisterPage() {
                         <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
                             <form onSubmit={handleRegister}>
                                 <h1 className="mb-6 text-2xl font-bold text-center lg:text-left">Register</h1>
+
+                                {
+                                    errors && errors.map((error, index) => {
+                                        return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
+                                    })
+                                }
 
                                 <div className="relative mb-6" data-twe-input-wrapper-init="">
                                     <input

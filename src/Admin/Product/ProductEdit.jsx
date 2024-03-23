@@ -30,45 +30,35 @@ function ProductEdit() {
     }, [auth.user]);
 
     async function getCategories() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
-            setCategories(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
+            setCategories(data);
         }
     }
 
     async function getProduct() {
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
-            const data = await response.json();
             setProductForm({
                 name: data.name,
                 description: data.description,
                 imageUrl: data.imageUrl,
                 category: data.category.id,
             })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
     function handleFormChange(value, name) {
-        console.log(value, name)
         setProductForm(prevState => ({
             ...prevState,
             [name]: value
@@ -90,44 +80,19 @@ function ProductEdit() {
         productForm.category && formData.append('CategoryId', productForm.category);
 
         setFormIsLoading(true);
-        const response = await fetch(`${config.API_URL}/api/v1/Product/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product/${id}`, {
             method: "PUT",
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: formData,
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         setFormIsLoading(false);
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Updated successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
-
+            toast("Updated successfully", {type: "success"});
             return navigate("/admin/products");
-        } else if (response.status === 401) {
-            toast("Unauthorized", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 413) {
-            toast("File is too large", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 400) {
-            const data = await response.json();
-            setErrors(data)
-
-            toast("Validation error", {
-                type: "error",
-                position: "bottom-right"
-            })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

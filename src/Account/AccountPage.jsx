@@ -3,7 +3,6 @@ import {useContext, useEffect, useState} from "react";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {useAuth} from "../provider/AuthProvider.jsx";
 import dayjs from "dayjs";
-import {toast} from "react-toastify";
 
 function AccountPage() {
     const config = useContext(ConfigContext);
@@ -12,25 +11,19 @@ function AccountPage() {
 
     useEffect(() => {
         if (auth.user) {
-            console.log(auth.user)
             getWonAuctions();
         }
     }, [auth.user]);
 
     async function getWonAuctions() {
-        const response = await fetch(`${config.API_URL}/api/v1/User/Auctions/Won`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/User/Auctions/Won`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
         if (response.status === 200) {
-            const data = await response.json();
             setAuctions(data)
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 

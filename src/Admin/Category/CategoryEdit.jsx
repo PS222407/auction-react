@@ -25,23 +25,18 @@ function CategoryEdit() {
 
     async function getCategory() {
         setFormIsLoading(true)
-        const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             headers: {
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
         setFormIsLoading(false);
 
         if (response.status === 200) {
-            const data = await response.json();
             setCategoryForm({
                 name: data.name,
                 icon: data.icon,
             })
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
@@ -59,28 +54,20 @@ function CategoryEdit() {
     }
 
     async function postEditCategory() {
-        const response = await fetch(`${config.API_URL}/api/v1/Category/${id}`, {
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + auth.user.accessToken,
             },
             body: JSON.stringify(categoryForm),
-        }).catch((error) => {
-            if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
-        });
+        }, auth.user);
 
+        setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 204) {
-            toast("Updated successfully", {
-                type: "success",
-                position: "bottom-right"
-            });
+            toast("Updated successfully", {type: "success"});
 
             return navigate("/admin/categories");
-        } else if (response.status === 400) {
-            setErrors(await response.json());
-        } else if (response.status === 500) {
-            toast((await response.json()).message, {type: "error"})
         }
     }
 
