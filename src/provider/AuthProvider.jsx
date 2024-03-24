@@ -132,8 +132,6 @@ export const AuthProvider = ({children}) => {
         } else if (response.status === 401) {
             toast("Unauthorized", {type: "error"})
             await logout();
-        } else if (response.status === 500) {
-            toast("Server error", {type: "error"})
         }
 
         return null;
