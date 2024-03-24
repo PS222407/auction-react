@@ -106,8 +106,6 @@ export const AuthProvider = ({children}) => {
             return user.accessToken;
         }
 
-        console.log("isExpired", isExpired);
-
         const apiurl = (await (await fetch('/config.json').catch((error) => {
             if (error.message === "Failed to fetch") toast("Network error", {type: "error"})
         })).json()).API_URL;
@@ -131,6 +129,9 @@ export const AuthProvider = ({children}) => {
             await getUser();
 
             return data.accessToken;
+        } else if (response.status === 401) {
+            toast("Unauthorized", {type: "error"})
+            await logout();
         }
 
         return null;
