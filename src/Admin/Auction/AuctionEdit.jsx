@@ -86,12 +86,6 @@ function AuctionEdit() {
         }
     }
 
-    if (auth.user === undefined) {
-        return "Loading...";
-    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
-        return "Unauthorized...";
-    }
-
     return (
         <>
             <AdminNav/>

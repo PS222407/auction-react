@@ -20,6 +20,7 @@ import AuctionPage from "./Auction/AuctionPage.jsx";
 import {ConfigProvider} from "./provider/ConfigProvider.jsx";
 import {AuthProvider} from "./provider/AuthProvider.jsx";
 import AccountPage from "./Account/AccountPage.jsx";
+import AdminRoutes from "./AdminRoutes.jsx";
 
 function App() {
     return (
@@ -37,19 +38,19 @@ function App() {
                         <Route path="/account" element={<AccountPage/>}/>
 
                         {/*ADMIN*/}
-                        <Route path="/admin" element={<AdminPage/>}/>
+                        <Route path="/admin" element={<AdminRoutes><AdminPage/></AdminRoutes>}/>
 
-                        <Route path="/admin/products" element={<ProductIndex/>}/>
-                        <Route path="/admin/products/create" element={<ProductCreate/>}/>
-                        <Route path="/admin/products/:id/edit" element={<ProductEdit/>}/>
+                        <Route path="/admin/products" element={<AdminRoutes><ProductIndex/></AdminRoutes>}/>
+                        <Route path="/admin/products/create" element={<AdminRoutes><ProductCreate/></AdminRoutes>}/>
+                        <Route path="/admin/products/:id/edit" element={<AdminRoutes><ProductEdit/></AdminRoutes>}/>
 
-                        <Route path="/admin/categories" element={<CategoryIndex/>}/>
-                        <Route path="/admin/categories/create" element={<CategoryCreate/>}/>
-                        <Route path="/admin/categories/:id/edit" element={<CategoryEdit/>}/>
+                        <Route path="/admin/categories" element={<AdminRoutes><CategoryIndex/></AdminRoutes>}/>
+                        <Route path="/admin/categories/create" element={<AdminRoutes><CategoryCreate/></AdminRoutes>}/>
+                        <Route path="/admin/categories/:id/edit" element={<AdminRoutes><CategoryEdit/></AdminRoutes>}/>
 
-                        <Route path="/admin/auctions" element={<AuctionIndex/>}/>
-                        <Route path="/admin/auctions/create" element={<AuctionCreate/>}/>
-                        <Route path="/admin/auctions/:id/edit" element={<AuctionEdit/>}/>
+                        <Route path="/admin/auctions" element={<AdminRoutes><AuctionIndex/></AdminRoutes>}/>
+                        <Route path="/admin/auctions/create" element={<AdminRoutes><AuctionCreate/></AdminRoutes>}/>
+                        <Route path="/admin/auctions/:id/edit" element={<AdminRoutes><AuctionEdit/></AdminRoutes>}/>
                     </Routes>
                 </BrowserRouter>
             </AuthProvider>

@@ -43,16 +43,10 @@ function CategoryCreate() {
         setFormIsLoading(false);
 
         setErrors(response.status === 400 ? data.errors : []);
-        if (response.status === 204) {
+        if (response.status === 201) {
             toast("Created successfully", {type: "success"});
             return navigate("/admin/categories");
         }
-    }
-
-    if (auth.user === undefined) {
-        return "Loading...";
-    } else if (auth.user === null || auth.user.roles.includes("Admin") === false) {
-        return "Unauthorized...";
     }
 
     return (
