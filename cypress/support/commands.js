@@ -30,7 +30,9 @@ Cypress.Commands.add('login', (role) => {
     cy.visit('http://localhost:5173/login')
 
     cy.intercept("/config.json", { fixture: 'config.json' }).as('getConfig');
+    cy.wait('@getConfig');
     cy.intercept("https://localhost:44305/api/v1/Category", { fixture: 'categories.json' }).as('getCategories');
+    cy.wait('@getCategories');
 
     cy.get('#email').type(`${role}@gmail.com`);
     cy.get('#password').type('password123456789');
@@ -40,4 +42,5 @@ Cypress.Commands.add('login', (role) => {
     cy.wait('@loginAdmin');
 
     cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { fixture: 'categories.json' }).as('getCategories');
+    cy.wait('@getCategories');
 });
