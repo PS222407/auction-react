@@ -4,9 +4,7 @@ describe('Register', () => {
         cy.visit('http://localhost:5173/register')
 
         cy.intercept("/config.json", { fixture: 'config.json' }).as('getConfig');
-        cy.wait('@getConfig');
         cy.intercept("https://localhost:44305/api/v1/Category", { fixture: 'categories.json' }).as('getCategories');
-        cy.wait('@getCategories');
 
         cy.get('#email').type(`register@gmail.com`);
         cy.get('#password').type('password123456789');
@@ -14,6 +12,5 @@ describe('Register', () => {
         cy.get('#register-button').click();
 
         cy.intercept('POST', 'https://localhost:44305/api/register', {statusCode: 204}).as('register');
-        cy.wait('@register');
     })
 })
