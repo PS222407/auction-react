@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "Cutlery Set",
+    "description": "A set of cutlery",
+    "imageUrl": "https://www.ikea.com/nl/en/images/products/gamman-24-piece-cutlery-set-stainless-steel__0713267_pe729383_s5.jpg?f=s",
+    "category": null,
+    "auctions": null
+  },
+  {
+    "id": 2,
+    "name": "Afzuigkap compleet met motor + LED verlichting | 1530m3 per uur | 900x560x250(h)mm",
+    "description": "Afzuigkap compleet met motor \n\nAfmeting 900x560x250(h)mm\n\nMateriaal RVS 430\n\nSpanning 230V\n\nFrequentie 50Hz\n\nEl.vermogen (kW) 0,246\n\nAf. aansluitmond mm 200\n\nCap. m3 lucht/uur 1530\n\nAfm. filters 2x 344x356(h)mm 1x 206x356(h)mm\n\nLED verlichting 2x3\n\nAantal filters 3\n\nGeluidsniveau (dB) 65\n\nType filter RVS lamellen\n\nMet regelaar\n\nMet motor \n\nGewicht 33 kg ",
+    "imageUrl": "https://cdn.webshopapp.com/shops/291748/files/339546304/1000x1000x2/combisteel-afzuigkap-compleet-met-motor-led-verlic.webp",
+    "category": null,
+    "auctions": null
+  },
+  {
+    "id": 3,
+    "name": "Fidget Spinner",
+    "description": "A fidget spinner",
+    "imageUrl": "https://cdn.webshopapp.com/shops/44056/files/334148720/890x820x2/fidget-fidget-spinner-classic-red.jpg",
+    "category": null,
+    "auctions": null
+  },
+  {
+    "id": 4,
+    "name": "Fidget Cube",
+    "description": "A fidget cube",
+    "imageUrl": "https://image.smythstoys.com/original/desktop/197796_7.jpg",
+    "category": null,
+    "auctions": null
+  },
+  {
+    "id": 5,
+    "name": "Pizza",
+    "description": "A delicious pizza",
+    "imageUrl": "https://www.moulinex-me.com/medias/?context=bWFzdGVyfHJvb3R8MTQzNTExfGltYWdlL2pwZWd8aGNlL2hmZC8xNTk2ODYyNTc4NjkxMC5qcGd8MmYwYzQ4YTg0MTgzNmVjYTZkMWZkZWZmMDdlMWFlMjRhOGIxMTQ2MTZkNDk4ZDU3ZjlkNDk2MzMzNDA5OWY3OA",
+    "category": null,
+    "auctions": null
+  },
+  {
+    "id": 6,
+    "name": "Burger",
+    "description": "A delicious burger",
+    "imageUrl": "https://www.outofhome-shops.nl/files/202202/dist/3d91e961ea0f0abc6ee29aabe8dddc10.jpg",
+    "category": null,
+    "auctions": null
+  },
+  {
+    "id": 7,
+    "name": "Pasta",
+    "description": "A delicious pasta",
+    "imageUrl": "https://www.culy.nl/wp-content/uploads/2023/09/3_pasta-all-assassina-recept-1024x683.jpg",
+    "category": null,
+    "auctions": null
+  }
+]
