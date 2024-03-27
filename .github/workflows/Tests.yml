@@ -1,4 +1,4 @@
-name: Deployment 
+name: E2E-Tests
 
 on:
   push:
@@ -21,3 +21,10 @@ jobs:
         browser: chrome
         build: npm run build
         start: npx vite --host
+
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
