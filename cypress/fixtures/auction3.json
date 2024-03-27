@@ -1,0 +1,51 @@
+{
+  "id": 3,
+  "product": {
+    "id": 3,
+    "name": "Fidget Spinner",
+    "description": "A fidget spinner",
+    "imageUrl": "https://cdn.webshopapp.com/shops/44056/files/334148720/890x820x2/fidget-fidget-spinner-classic-red.jpg",
+    "category": null,
+    "auctions": null
+  },
+  "startDateTime": "2023-09-01T12:00:00",
+  "durationInSeconds": 3600,
+  "bids": [
+    {
+      "id": 15,
+      "priceInCents": 1500,
+      "createdAt": "2023-09-01T12:00:00",
+      "user": {
+        "id": "0206A018-5AC6-492D-AB99-10105193D384",
+        "email": "admin@gmail.com"
+      }
+    },
+    {
+      "id": 14,
+      "priceInCents": 1400,
+      "createdAt": "2023-09-01T12:00:00",
+      "user": {
+        "id": "3FEF01FF-C53F-43B1-96BE-9D806DEC8652",
+        "email": "employee@gmail.com"
+      }
+    },
+    {
+      "id": 13,
+      "priceInCents": 1300,
+      "createdAt": "2023-09-01T12:00:00",
+      "user": {
+        "id": "0206A018-5AC6-492D-AB99-10105193D384",
+        "email": "admin@gmail.com"
+      }
+    },
+    {
+      "id": 12,
+      "priceInCents": 1200,
+      "createdAt": "2023-09-01T12:00:00",
+      "user": {
+        "id": "3FEF01FF-C53F-43B1-96BE-9D806DEC8652",
+        "email": "employee@gmail.com"
+      }
+    }
+  ]
+}
