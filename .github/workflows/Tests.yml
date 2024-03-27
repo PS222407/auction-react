@@ -1,0 +1,30 @@
+name: E2E-Tests
+
+on:
+  push:
+    branches:
+      - E2E
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Install npm dependencies, cache them correctly
+    # and run all Cypress tests
+    - name: Cypress run
+      uses: cypress-io/github-action@v6
+      with:
+        browser: chrome
+        build: npm run build
+        start: npx vite --host
+
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
