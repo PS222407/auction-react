@@ -1,0 +1,14 @@
+{
+  "id": 7,
+  "product": {
+    "id": 4,
+    "name": "Fidget Cube",
+    "description": "A fidget cube",
+    "imageUrl": "https://image.smythstoys.com/original/desktop/197796_7.jpg",
+    "category": null,
+    "auctions": null
+  },
+  "startDateTime": "1982-09-05T14:50:00",
+  "durationInSeconds": 57,
+  "bids": null
+}

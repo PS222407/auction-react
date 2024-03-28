@@ -90,7 +90,7 @@ function AuctionCreate() {
 
                     <br/>
 
-                    <form onSubmit={postCreateAuction}>
+                    <form data-cy={"auction-create-form"} onSubmit={postCreateAuction}>
                         <div className={"flex flex-col"}>
                             <label htmlFor="name">Product</label>
                             <select name="product" id="product"
@@ -128,7 +128,7 @@ function AuctionCreate() {
                                     <Spinner />
                                 </div>
                             }
-                            <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}>
+                            <button data-cy={"auction-submit"} className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}>
                                 Submit
                             </button>
                         </div>
