@@ -49,7 +49,7 @@ function ProductPage() {
                             <div>
                                 <img className={"w-full aspect-square object-cover md:w-96"} src={product.imageUrl} alt={product.name}/>
                             </div>
-                            <div className={"font-bold text-xl"}>{product.name}</div>
+                            <h2 data-cy={'product-name'} className={"font-bold text-xl"}>{product.name}</h2>
                             <div className={"mt-4"}>{product.description}</div>
                         </div>
 

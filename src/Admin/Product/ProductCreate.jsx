@@ -83,7 +83,7 @@ function ProductCreate() {
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
-                    <h1 className={"text-4xl font-bold text-black"}>Create product</h1>
+                    <h1 data-cy={"product-create"} className={"text-4xl font-bold text-black"}>Create product</h1>
 
                     {
                         errors && errors.map((error, index) => {
@@ -121,7 +121,7 @@ function ProductCreate() {
                             />
                         </div>
                         <div className={"flex flex-col"}>
-                            <label htmlFor="email">Image</label>
+                            <label htmlFor="image">Image</label>
                             <input
                                 type={"file"}
                                 id={"image"}
@@ -149,7 +149,7 @@ function ProductCreate() {
                                     <Spinner />
                                 </div>
                             }
-                            <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
+                            <button data-cy={"product-submit"} className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={handleSubmitProduct}>Submit
                             </button>
                         </div>

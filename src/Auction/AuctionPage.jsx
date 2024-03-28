@@ -141,7 +141,7 @@ function AuctionPage() {
                                 <img className={"w-full aspect-square object-cover md:w-96"}
                                      src={auction.product.imageUrl} alt={auction.product.name}/>
                             </div>
-                            <div className={"font-bold text-xl"}>{auction.product.name}</div>
+                            <h2 data-cy={"auction-title"} className={"font-bold text-xl"}>{auction.product.name}</h2>
                             <div className={"mt-4"}>{auction.product.description}</div>
                         </div>
 

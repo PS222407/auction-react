@@ -42,6 +42,8 @@ function CategoryCreate() {
         }, auth.user);
         setFormIsLoading(false);
 
+        alert(response.status);
+
         setErrors(response.status === 400 ? data.errors : []);
         if (response.status === 201) {
             toast("Created successfully", {type: "success"});
@@ -55,7 +57,7 @@ function CategoryCreate() {
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
-                    <h1 className={"text-4xl font-bold text-black"}>Create category</h1>
+                    <h1 data-cy={"category-create"} className={"text-4xl font-bold text-black"}>Create category</h1>
 
                     {
                         errors && errors.map((error, index) => {
@@ -87,8 +89,8 @@ function CategoryCreate() {
                         <div className={"flex flex-col"}>
                             <label htmlFor="name">Icon (svg from fontawesome e.g.)</label>
                             <textarea
-                                id={"name"}
-                                name={"name"}
+                                id={"icon"}
+                                name={"icon"}
                                 onChange={(e) => handleFormChange(e.target.value, "icon")}
                             />
                         </div>
@@ -99,7 +101,7 @@ function CategoryCreate() {
                                     <Spinner />
                                 </div>
                             }
-                            <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
+                            <button data-cy={"category-submit"} className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={handleSubmitCategory}>
                                 Submit
                             </button>

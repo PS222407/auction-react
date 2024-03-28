@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "product": {
+      "id": 1,
+      "name": "Cutlery Set",
+      "description": "A set of cutlery",
+      "imageUrl": "https://www.ikea.com/nl/en/images/products/gamman-24-piece-cutlery-set-stainless-steel__0713267_pe729383_s5.jpg?f=s",
+      "category": null,
+      "auctions": null
+    },
+    "startDateTime": "2023-09-01T12:00:00",
+    "durationInSeconds": 3600,
+    "bids": null
+  },
+  {
+    "id": 2,
+    "product": {
+      "id": 2,
+      "name": "Afzuigkap compleet met motor + LED verlichting | 1530m3 per uur | 900x560x250(h)mm",
+      "description": "Afzuigkap compleet met motor \n\nAfmeting 900x560x250(h)mm\n\nMateriaal RVS 430\n\nSpanning 230V\n\nFrequentie 50Hz\n\nEl.vermogen (kW) 0,246\n\nAf. aansluitmond mm 200\n\nCap. m3 lucht/uur 1530\n\nAfm. filters 2x 344x356(h)mm 1x 206x356(h)mm\n\nLED verlichting 2x3\n\nAantal filters 3\n\nGeluidsniveau (dB) 65\n\nType filter RVS lamellen\n\nMet regelaar\n\nMet motor \n\nGewicht 33 kg ",
+      "imageUrl": "https://cdn.webshopapp.com/shops/291748/files/339546304/1000x1000x2/combisteel-afzuigkap-compleet-met-motor-led-verlic.webp",
+      "category": null,
+      "auctions": null
+    },
+    "startDateTime": "2023-09-01T12:00:00",
+    "durationInSeconds": 3600,
+    "bids": null
+  },
+  {
+    "id": 3,
+    "product": {
+      "id": 3,
+      "name": "Fidget Spinner",
+      "description": "A fidget spinner",
+      "imageUrl": "https://cdn.webshopapp.com/shops/44056/files/334148720/890x820x2/fidget-fidget-spinner-classic-red.jpg",
+      "category": null,
+      "auctions": null
+    },
+    "startDateTime": "2023-09-01T12:00:00",
+    "durationInSeconds": 3600,
+    "bids": null
+  }
+]

@@ -79,7 +79,7 @@ function CategoryIndex() {
                         {
                             categories.map((category) => {
                                 return (
-                                    <tr key={category.id}>
+                                    <tr data-cy={"category-row"} key={category.id}>
                                         <td>
                                             <Link to={`/admin/categories/${category.id}/edit`}
                                                   className={"hover:underline cursor-pointer"}>
