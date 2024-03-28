@@ -14,3 +14,9 @@ describe('Register', () => {
         cy.intercept('POST', 'https://localhost:44305/api/register', {statusCode: 204}).as('register');
     })
 })
+
+describe('Login', () => {
+    it('passes', () => {
+        cy.login('admin')
+    })
+})
