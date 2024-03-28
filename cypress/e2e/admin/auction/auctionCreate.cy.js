@@ -1,10 +1,9 @@
 /* eslint-disable */
 describe('Load Admin Auction Create', () => {
     it('passes', () => {
-        cy.intercept("GET","/config.json", { fixture: 'config.json' }).as('getConfig');
-        cy.intercept("GET", "https://localhost:44305/api/v1/Product", { fixture: 'products.json' }).as('getProducts');
+        cy.intercept("GET", "https://localhost:44305/api/v1/Product", { statusCode: 200, fixture: 'products.json' }).as('getProducts');
         cy.intercept("POST", "https://localhost:44305/api/v1/Auction", { statusCode: 201, fixture: 'productCreate' }).as('createAuction');
-        cy.intercept("GET", "https://localhost:44305/api/v1/Auction", { fixture: 'auctions.json' }).as('getAuctions');
+        cy.intercept("GET", "https://localhost:44305/api/v1/Auction", { statusCode: 200, fixture: 'auctions.json' }).as('getAuctions');
 
         cy.login('admin');
 

@@ -1,8 +1,7 @@
 /* eslint-disable */
 describe('Load Admin Auction Index', () => {
     it('passes', () => {
-        cy.intercept("/config.json", { fixture: 'config.json' }).as('getConfig');
-        cy.intercept("https://localhost:44305/api/v1/Auction", { statusCode: 200, fixture: 'auctions.json' }).as('getAuctions');
+        cy.intercept("GET", "https://localhost:44305/api/v1/Auction", { statusCode: 200, fixture: 'auctions.json' }).as('getAuctions');
 
         cy.login('admin');
 
