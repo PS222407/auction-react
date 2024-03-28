@@ -1,0 +1,12 @@
+/* eslint-disable */
+describe('Load Admin Auction Edit', () => {
+    it('passes', () => {
+        cy.login('admin');
+
+        cy.visit('http://localhost:5173/admin/auctions/3/edit');
+
+        cy.intercept("/config.json", { fixture: 'config.json' }).as('getConfig');
+        cy.intercept("https://localhost:44305/api/v1/Product", { fixture: 'products.json' }).as('getProducts');
+        cy.intercept("https://localhost:44305/api/v1/Auction/3", { fixture: 'auction3.json' }).as('GetAuction3');
+    })
+})
