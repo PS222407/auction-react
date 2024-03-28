@@ -77,7 +77,7 @@ function CategoryEdit() {
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
-                    <h1 className={"text-4xl font-bold text-black"}>Edit Category</h1>
+                    <h1 data-cy={"category-edit"} className={"text-4xl font-bold text-black"}>Edit Category</h1>
 
                     {
                         errors && errors.map((error, index) => {

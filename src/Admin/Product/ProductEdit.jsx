@@ -102,7 +102,7 @@ function ProductEdit() {
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
-                    <h1 className={"text-4xl font-bold text-black"}>Edit product</h1>
+                    <h1 data-cy={"product-edit"} className={"text-4xl font-bold text-black"}>Edit product</h1>
 
                     {
                         errors && errors.map((error, index) => {

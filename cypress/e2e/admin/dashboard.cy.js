@@ -6,5 +6,7 @@ describe('Load Admin Dashboard', () => {
         cy.visit('http://localhost:5173/admin');
 
         cy.intercept("/config.json", { fixture: 'config.json' }).as('getConfig');
+
+        cy.get('[data-cy="admin-dashboard"]').should('be.visible');
     })
 })
