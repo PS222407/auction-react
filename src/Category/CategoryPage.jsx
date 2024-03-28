@@ -34,7 +34,7 @@ function CategoryPage() {
             <Nav/>
 
             <div className={"mx-4 2xl:mx-auto max-w-screen-2xl mt-10"}>
-                <h1 className={"text-2xl w-full text-center font-bold"}>{category?.name}</h1>
+                <h1 data-cy={"category-title"} className={"text-2xl w-full text-center font-bold"}>{category?.name}</h1>
                 {
                     isLoading && <div className={"flex justify-center"}><Spinner/></div>
                 }

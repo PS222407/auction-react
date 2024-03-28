@@ -72,7 +72,7 @@ function RegisterPage() {
 
                         <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
                             <form onSubmit={handleRegister}>
-                                <h1 className="mb-6 text-2xl font-bold text-center lg:text-left">Register</h1>
+                                <h1 data-cy={"register-title"} className="mb-6 text-2xl font-bold text-center lg:text-left">Register</h1>
 
                                 {
                                     errors && errors.map((error, index) => {
