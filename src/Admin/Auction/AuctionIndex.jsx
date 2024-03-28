@@ -86,7 +86,7 @@ function AuctionIndex() {
                         {
                             auctions.map((auction) => {
                                 return (
-                                    <tr key={auction.id}>
+                                    <tr data-cy={"auction-row"} key={auction.id}>
                                         <td>
                                             <Link to={`/admin/auctions/${auction.id}/edit`}
                                                   className={"hover:underline cursor-pointer"}>

@@ -85,7 +85,7 @@ function ProductIndex() {
                         {
                             products.map((product) => {
                                 return (
-                                    <tr key={product.id}>
+                                    <tr data-cy={"product-row"} key={product.id}>
                                         <td>
                                             <Link to={`/admin/products/${product.id}/edit`}
                                                   className={"hover:underline cursor-pointer"}>
