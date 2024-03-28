@@ -111,8 +111,8 @@ function CategoryEdit() {
                             <label htmlFor="name">Icon (svg from fontawesome e.g.)</label>
                             <textarea
                                 value={categoryForm.icon}
-                                id={"name"}
-                                name={"name"}
+                                id={"icon"}
+                                name={"icon"}
                                 onChange={(e) => handleFormChange(e.target.value, "icon")}
                             />
                         </div>
@@ -123,7 +123,7 @@ function CategoryEdit() {
                                     <Spinner/>
                                 </div>
                             }
-                            <button className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
+                            <button data-cy={"category-submit"} className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={handleSubmitCategory}>Submit
                             </button>
                         </div>

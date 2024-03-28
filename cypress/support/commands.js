@@ -27,10 +27,10 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', (role) => {
-    cy.intercept("/config.json", { statusCode: 200, fixture: 'config.json' }).as('getConfig');
-    cy.intercept("https://localhost:44305/api/v1/Category", { statusCode: 200, fixture: 'categories.json' }).as('getCategories');
-    cy.intercept('POST','https://localhost:44305/api/Login', { statusCode: 200, fixture: 'loginAdmin.json' }).as('loginAdmin');
-    cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { statusCode: 200, fixture: 'categories.json' }).as('getCategories');
+    cy.intercept("/config.json", { statusCode: 200, fixture: 'config.json' }).as('getConfig_LOGIN');
+    cy.intercept("GET", "https://localhost:44305/api/v1/Category", { statusCode: 200, fixture: 'categories.json' }).as('getCategories_LOGIN');
+    cy.intercept('POST','https://localhost:44305/api/Login', { statusCode: 200, fixture: 'loginAdmin.json' }).as('loginAdmin_LOGIN');
+    cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { statusCode: 200, fixture: 'categories.json' }).as('getCategories_LOGIN');
 
     cy.visit('http://localhost:5173/login')
 

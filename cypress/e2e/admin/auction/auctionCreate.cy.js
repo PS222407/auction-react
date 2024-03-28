@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Load Admin Auction Create', () => {
     it('passes', () => {
         cy.intercept("GET","/config.json", { fixture: 'config.json' }).as('getConfig');
