@@ -5,8 +5,10 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {useTranslation} from "react-i18next";
 
 function ProductCreate() {
+    const {t} = useTranslation();
     const config = useContext(ConfigContext);
     const auth = useAuth();
     const navigate = useNavigate();
@@ -84,10 +86,14 @@ function ProductCreate() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 data-cy={"product-create"} className={"text-4xl font-bold text-black"}>Create product</h1>
-
                     {
                         errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
+                            const errorObject = JSON.parse(error.errorMessage);
+                            const errorMessage = t(errorObject.key, {
+                                field: t(`propertyNames.${errorObject.propertyName}`),
+                                max: errorObject.maxLength
+                            });
+                            return (<p key={index} className={"text-red-500"}>{errorMessage}</p>)
                         })
                     }
 

@@ -4,12 +4,14 @@ import ConfigContext from "./ConfigProvider.jsx";
 import {toast} from "react-toastify";
 import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from "jwt-decode";
+import {useTranslation} from "react-i18next";
 
 dayjs.extend(utc);
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
+    const {t} = useTranslation();
     const config = useContext(ConfigContext);
     const [user, setUser] = useState();
 
@@ -90,7 +92,13 @@ export const AuthProvider = ({children}) => {
         } else if (response.status === 413) {
             toast("File is too large", {type: "error"})
         } else if (response.status === 400) {
-            toast(data.message ?? data.errors[0].errorMessage, {type: "error"});
+            const errorObject = JSON.parse(data.errors[0].errorMessage);
+            let errorMessage = data.message ?? t(errorObject.key, {
+                field: t(`propertyNames.${errorObject.propertyName}`),
+                max: errorObject.maxLength
+            });
+
+            toast(data.message ?? errorMessage, {type: "error"});
         }
 
         return [response, data];

@@ -1,3 +1,13 @@
 {
-  "hello-world": "Hallo wereld!"
+  "hello-world": "Hallo wereld!",
+  "validation": {
+    "required": "{{field}} is verplicht",
+    "max_length": "{{field}} mag niet langer zijn dan {{max}} tekens"
+  },
+  "propertyNames": {
+    "Name": "naam",
+    "Description": "beschrijving",
+    "Category": "categorie",
+    "Image": "afbeelding"
+  }
 }

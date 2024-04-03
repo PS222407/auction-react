@@ -1,3 +1,13 @@
 {
-  "hello-world": "Hello world!"
+  "hello-world": "Hello world!",
+  "validation": {
+    "required": "{{field}} is required",
+    "max_length": "{{field}} must not be longer than {{max}} characters long"
+  },
+  "propertyNames": {
+    "Name": "name",
+    "Description": "description",
+    "Category": "category",
+    "Image": "image"
+  }
 }
