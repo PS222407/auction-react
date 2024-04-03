@@ -6,6 +6,7 @@ import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
+import {object, setLocale, string} from 'yup';
 
 function ProductCreate() {
     const {t} = useTranslation();
@@ -22,11 +23,38 @@ function ProductCreate() {
         category: null,
     });
 
+    setLocale({
+        mixed: {
+            required: t("validation.required", {field: "${label}" }),
+        },
+        string: {
+            max: t("validation.max_length", {field: "${label}", max: "${max}"}),
+        }
+        // number: {
+        //     min: t("validation.required", {field: "${path}"})"NeA ${min}",
+        // }
+    });
+
+    let productSchema = object({
+        name: string().max(255).required().label(t("propertyNames.Name")),
+        description: string().max(1_000_000).required().label(t("propertyNames.Description")),
+        image: string().required().label(t("propertyNames.Image")),
+        category: string().required().label(t("propertyNames.Category")),
+    });
+
     useEffect(() => {
         if (auth.user) {
             getCategories();
         }
     }, [auth.user]);
+
+    async function validate() {
+        try {
+            await productSchema.validate(productForm, {abortEarly: false});
+        } catch (e) {
+            console.log(e.errors);
+        }
+    }
 
     async function getCategories() {
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
@@ -85,6 +113,9 @@ function ProductCreate() {
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
+
+                    <button onClick={() => validate()}>validate</button>
+
                     <h1 data-cy={"product-create"} className={"text-4xl font-bold text-black"}>Create product</h1>
                     {
                         errors && errors.map((error, index) => {
