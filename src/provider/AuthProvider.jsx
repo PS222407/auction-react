@@ -128,11 +128,14 @@ export const AuthProvider = ({children}) => {
         if (response.status === 200) {
             const data = await response.json();
 
-            localStorage.setItem("auth", JSON.stringify({
+            let auth = JSON.parse(localStorage.getItem("auth"));
+            auth = {
+                ...auth,
                 accessToken: data.accessToken,
-                refreshToken: data.refreshToken,
                 expiresAt: dayjs().utc().add(data.expiresIn, 'second')
-            }));
+            }
+
+            localStorage.setItem("auth", JSON.stringify(auth));
 
             await getUser();
 

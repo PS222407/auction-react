@@ -6,7 +6,8 @@ import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
-import {object, setLocale, string} from 'yup';
+import {number, object, setLocale, string} from 'yup';
+import FormErrors from "../../Components/FormErrors.jsx";
 
 function ProductCreate() {
     const {t} = useTranslation();
@@ -25,10 +26,10 @@ function ProductCreate() {
 
     setLocale({
         mixed: {
-            required: t("validation.required", {field: "${label}" }),
+            required: JSON.stringify({key: "validation.required", propertyName: "${label}"}),
         },
         string: {
-            max: t("validation.max_length", {field: "${label}", max: "${max}"}),
+            max: JSON.stringify({key: "validation.max_length", propertyName: "${label}", maxLength: "${max}"}),
         }
         // number: {
         //     min: t("validation.required", {field: "${path}"})"NeA ${min}",
@@ -36,10 +37,10 @@ function ProductCreate() {
     });
 
     let productSchema = object({
-        name: string().max(255).required().label(t("propertyNames.Name")),
-        description: string().max(1_000_000).required().label(t("propertyNames.Description")),
-        image: string().required().label(t("propertyNames.Image")),
-        category: string().required().label(t("propertyNames.Category")),
+        name: string().max(255).required().label("Name"),
+        description: string().max(1_000_000).required().label("Description"),
+        image: string().required().label("Image"),
+        category: number().integer().required().label("Category"),
     });
 
     useEffect(() => {
@@ -51,8 +52,15 @@ function ProductCreate() {
     async function validate() {
         try {
             await productSchema.validate(productForm, {abortEarly: false});
+            setErrors([]);
+            return true;
         } catch (e) {
-            console.log(e.errors);
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
         }
     }
 
@@ -78,7 +86,9 @@ function ProductCreate() {
     async function handleSubmitProduct(e) {
         e.preventDefault();
 
-        await postCreateProduct();
+        if (await validate()) {
+            await postCreateProduct();
+        }
     }
 
     async function postCreateProduct() {
@@ -100,7 +110,7 @@ function ProductCreate() {
 
         setFormIsLoading(false);
 
-        setErrors(response.status === 400 ? data.errors : []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)): []);
         if (response.status === 201) {
             toast("Created successfully", {type: "success"});
             return navigate("/admin/products");
@@ -117,16 +127,7 @@ function ProductCreate() {
                     <button onClick={() => validate()}>validate</button>
 
                     <h1 data-cy={"product-create"} className={"text-4xl font-bold text-black"}>Create product</h1>
-                    {
-                        errors && errors.map((error, index) => {
-                            const errorObject = JSON.parse(error.errorMessage);
-                            const errorMessage = t(errorObject.key, {
-                                field: t(`propertyNames.${errorObject.propertyName}`),
-                                max: errorObject.maxLength
-                            });
-                            return (<p key={index} className={"text-red-500"}>{errorMessage}</p>)
-                        })
-                    }
+                    <FormErrors errors={errors} />
 
                     <br/>
 
