@@ -4,12 +4,14 @@ import ConfigContext from "./ConfigProvider.jsx";
 import {toast} from "react-toastify";
 import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from "jwt-decode";
+import {useTranslation} from "react-i18next";
 
 dayjs.extend(utc);
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
+    const {t} = useTranslation();
     const config = useContext(ConfigContext);
     const [user, setUser] = useState();
 
@@ -90,7 +92,19 @@ export const AuthProvider = ({children}) => {
         } else if (response.status === 413) {
             toast("File is too large", {type: "error"})
         } else if (response.status === 400) {
-            toast(data.message ?? data.errors[0].errorMessage, {type: "error"});
+            let errorMessage = "";
+            if (data.message) {
+                errorMessage = data.message;
+            } else if (data.errors !== undefined) {
+                const error = JSON.parse(data.errors[0].errorMessage);
+                errorMessage = data.message ?? t(error.key, {
+                    field: t(`propertyNames.${error.propertyName}`),
+                    max: error.maxLength ?? error.maxValue,
+                    min: error.minValue,
+                });
+            }
+
+            toast(errorMessage, {type: "error"});
         }
 
         return [response, data];
@@ -120,11 +134,14 @@ export const AuthProvider = ({children}) => {
         if (response.status === 200) {
             const data = await response.json();
 
-            localStorage.setItem("auth", JSON.stringify({
+            let auth = JSON.parse(localStorage.getItem("auth"));
+            auth = {
+                ...auth,
                 accessToken: data.accessToken,
-                refreshToken: data.refreshToken,
                 expiresAt: dayjs().utc().add(data.expiresIn, 'second')
-            }));
+            }
+
+            localStorage.setItem("auth", JSON.stringify(auth));
 
             await getUser();
 

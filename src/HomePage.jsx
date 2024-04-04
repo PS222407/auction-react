@@ -5,8 +5,10 @@ import ConfigContext from "./provider/ConfigProvider.jsx";
 import {toast} from "react-toastify";
 import Spinner from "./Components/Spinner.jsx";
 import {useAuth} from "./provider/AuthProvider.jsx";
+import {useTranslation} from "react-i18next";
 
 function HomePage() {
+    const {t,i18n} = useTranslation();
     const config = useContext(ConfigContext);
     const auth = useAuth();
     const [isLoading, setIsLoading] = useState(false);
@@ -31,11 +33,22 @@ function HomePage() {
         }
     }
 
+    const lngs = {
+        "en": { nativeName: "English" },
+        "nl": { nativeName: "Nederlands" }
+    };
+
     return (
         <>
             <Nav/>
 
             <div className={"mx-4 2xl:mx-auto max-w-screen-2xl mt-10"}>
+                <div>
+                    {Object.keys(lngs).map((lng) => (
+                        <button key={lng} onClick={() => i18n.changeLanguage(lng)}>{lngs[lng].nativeName}</button>
+                    ))}
+                </div>
+                <h1>{t("hello-world")}</h1>
                 {
                     isLoading && <div className={"flex justify-center"}><Spinner/></div>
                 }

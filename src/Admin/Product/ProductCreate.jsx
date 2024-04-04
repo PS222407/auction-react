@@ -5,6 +5,8 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import FormErrors from "../../Components/FormErrors.jsx";
+import {number, object, string} from "yup";
 
 function ProductCreate() {
     const config = useContext(ConfigContext);
@@ -25,6 +27,28 @@ function ProductCreate() {
             getCategories();
         }
     }, [auth.user]);
+
+    const productSchema = object({
+        name: string().max(255).required().label("Name"),
+        description: string().max(1_000_000).required().label("Description"),
+        image: string().required().label("Image"),
+        category: number().integer().required().label("Category"),
+    });
+
+    async function validate() {
+        try {
+            await productSchema.validate(productForm, {abortEarly: false});
+            setErrors([]);
+            return true;
+        } catch (e) {
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
+        }
+    }
 
     async function getCategories() {
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Category`, {
@@ -48,7 +72,9 @@ function ProductCreate() {
     async function handleSubmitProduct(e) {
         e.preventDefault();
 
-        await postCreateProduct();
+        if (await validate()) {
+            await postCreateProduct();
+        }
     }
 
     async function postCreateProduct() {
@@ -70,7 +96,7 @@ function ProductCreate() {
 
         setFormIsLoading(false);
 
-        setErrors(response.status === 400 ? data.errors : []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)) : []);
         if (response.status === 201) {
             toast("Created successfully", {type: "success"});
             return navigate("/admin/products");
@@ -84,12 +110,7 @@ function ProductCreate() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 data-cy={"product-create"} className={"text-4xl font-bold text-black"}>Create product</h1>
-
-                    {
-                        errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
-                        })
-                    }
+                    <FormErrors errors={errors} />
 
                     <br/>
 

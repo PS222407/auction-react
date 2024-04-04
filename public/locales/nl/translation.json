@@ -1,0 +1,25 @@
+{
+  "hello-world": "Hallo wereld!",
+  "validation": {
+    "required": "{{field}} is verplicht",
+    "max_length": "{{field}} mag niet langer zijn dan {{max}} tekens",
+    "number_max": "{{field}} moet kleiner zijn dan {{max}}",
+    "number_min": "{{field}} moet groter zijn dan {{min}}",
+    "email": "{{field}} moet een geldig e-mailadres zijn",
+    "password_confirm": "wachtwoorden komen niet overeen"
+  },
+  "propertyNames": {
+    "Name": "naam",
+    "Description": "beschrijving",
+    "Category": "categorie",
+    "Icon": "icoon",
+    "StartDateTime": "startdatum en tijd",
+    "Duration In Seconds": "duur in seconden",
+    "Product": "product",
+    "Password": "wachtwoord",
+    "Email": "e-mail",
+    "Confirm Password": "bevestig wachtwoord",
+    "Price In Cents": "prijs",
+    "Image": "afbeelding"
+  }
+}

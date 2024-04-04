@@ -5,6 +5,8 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import FormErrors from "../../Components/FormErrors.jsx";
+import {object, string} from "yup";
 
 function CategoryEdit() {
     const config = useContext(ConfigContext);
@@ -15,6 +17,12 @@ function CategoryEdit() {
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [categoryForm, setCategoryForm] = useState({
         name: '',
+        icon: '',
+    });
+
+    const categorySchema = object({
+        name: string().max(255).required().label("Name"),
+        icon: string().max(1_000_000).required().label("Icon"),
     });
 
     useEffect(() => {
@@ -22,6 +30,21 @@ function CategoryEdit() {
             getCategory();
         }
     }, [auth.user]);
+
+    async function validate() {
+        try {
+            await categorySchema.validate(categoryForm, {abortEarly: false});
+            setErrors([]);
+            return true;
+        } catch (e) {
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
+        }
+    }
 
     async function getCategory() {
         setFormIsLoading(true)
@@ -50,7 +73,9 @@ function CategoryEdit() {
     async function handleSubmitCategory(e) {
         e.preventDefault();
 
-        await postEditCategory();
+        if (await validate()) {
+            await postEditCategory();
+        }
     }
 
     async function postEditCategory() {
@@ -63,7 +88,7 @@ function CategoryEdit() {
             body: JSON.stringify(categoryForm),
         }, auth.user);
 
-        setErrors(response.status === 400 ? data.errors : []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)) : []);
         if (response.status === 204) {
             toast("Updated successfully", {type: "success"});
 
@@ -78,12 +103,7 @@ function CategoryEdit() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 data-cy={"category-edit"} className={"text-4xl font-bold text-black"}>Edit Category</h1>
-
-                    {
-                        errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
-                        })
-                    }
+                    <FormErrors errors={errors}/>
 
                     <br/>
 
