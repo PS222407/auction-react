@@ -21,7 +21,7 @@ function ProductEdit() {
         description: '',
         image: '',
         imageUrl: '',
-        category: null,
+        category: undefined,
     });
 
     useEffect(() => {
@@ -172,17 +172,19 @@ function ProductEdit() {
                         </div>
                         <div className={"flex flex-col"}>
                             <label htmlFor="category">category</label>
-                            <select name="category" id="category"
-                                    onChange={(e) => handleFormChange(e.target.value, "category")}>
-                                <option value="" disabled selected={productForm.category === null}>Select your option
-                                </option>
-                                {
-                                    categories.map((category) => {
-                                        return <option selected={category.id === productForm.category} key={category.id}
-                                                       value={category.id}>{category.name}</option>
-                                    })
-                                }
-                            </select>
+                            {
+                                productForm.category !== undefined &&
+                                <select defaultValue={productForm.category === null ? "" : productForm.category} name="category" id="category"
+                                        onChange={(e) => handleFormChange(e.target.value, "category")}>
+                                    <option value="" disabled>Select your option
+                                    </option>
+                                    {
+                                        categories.map((category) => {
+                                            return <option key={category.id} value={category.id}>{category.name}</option>
+                                        })
+                                    }
+                                </select>
+                            }
                         </div>
                         <div>
                             {

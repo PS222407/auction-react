@@ -152,9 +152,9 @@ function ProductCreate() {
                         </div>
                         <div className={"flex flex-col"}>
                             <label htmlFor="category">category</label>
-                            <select name="category" id="category"
+                            <select defaultValue={""} name="category" id="category"
                                     onChange={(e) => handleFormChange(e.target.value, "category")}>
-                                <option value="" disabled selected>Select your option</option>
+                                <option value="" disabled>Select your option</option>
                                 {
                                     categories.map((category) => {
                                         return <option key={category.id} value={category.id}>{category.name}</option>

@@ -113,9 +113,9 @@ function AuctionCreate() {
                     <form data-cy={"auction-create-form"} onSubmit={postCreateAuction}>
                         <div className={"flex flex-col"}>
                             <label htmlFor="name">Product</label>
-                            <select name="product" id="product"
+                            <select defaultValue={""} name="product" id="product"
                                     onChange={(e) => handleFormChange(e.target.value, "productId")}>
-                                <option value="" disabled selected>Select your option</option>
+                                <option value="" disabled>Select your option</option>
                                 {
                                     products.map((product) => {
                                         return <option key={product.id} value={product.id}>{product.name}</option>

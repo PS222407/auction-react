@@ -7,6 +7,7 @@ import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {date, number, object, string} from "yup";
 import FormErrors from "../../Components/FormErrors.jsx";
+import dayjs from "dayjs";
 
 function AuctionEdit() {
     const config = useContext(ConfigContext);
@@ -18,7 +19,7 @@ function AuctionEdit() {
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
         productId: 0,
-        startDateTime: undefined,
+        startDateTime: "",
         durationInSeconds: 0,
     });
 
@@ -74,7 +75,7 @@ function AuctionEdit() {
         if (response.status === 200) {
             setAuctionForm({
                 durationInSeconds: data.durationInSeconds,
-                startDateTime: data.startDateTime,
+                startDateTime: dayjs(data.startDateTime).format("YYYY-MM-DDTHH:mm"),
                 productId: data.product.id
             })
         }
@@ -91,10 +92,8 @@ function AuctionEdit() {
 
     async function postEditAuction(e) {
         e.preventDefault();
-
-        var resutl =await validate();
-        console.log(resutl);
-        if (!resutl) return;
+        
+        if (!await validate()) return;
 
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "PUT",
@@ -136,17 +135,19 @@ function AuctionEdit() {
                     <form data-cy={"auction-edit-form"} onSubmit={postEditAuction}>
                         <div className={"flex flex-col"}>
                             <label htmlFor="product">Product</label>
-                            <select name="product" id="product"
-                                    onChange={(e) => handleFormChange(e.target.value, "productId")}>
-                                <option value="" disabled selected={auctionForm.productId === null}>Select your option
-                                </option>
-                                {
-                                    products.map((product) => {
-                                        return <option selected={product.id === auctionForm.productId} key={product.id}
-                                                       value={product.id}>{product.name}</option>
-                                    })
-                                }
-                            </select>
+                            {
+                                auctionForm.productId !== 0 &&
+                                <select defaultValue={auctionForm.productId} name="product" id="product"
+                                        onChange={(e) => handleFormChange(e.target.value, "productId")}>
+                                    <option value="" disabled>Select your option
+                                    </option>
+                                    {
+                                        products.map((product) => {
+                                            return <option key={product.id} value={product.id}>{product.name}</option>
+                                        })
+                                    }
+                                </select>
+                            }
                         </div>
                         <div className={"flex flex-col"}>
                             <label htmlFor="startDateTime">Start Date Time</label>
