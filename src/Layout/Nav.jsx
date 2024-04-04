@@ -3,6 +3,7 @@ import {Collapse, Dropdown, initTWE} from "tw-elements";
 import {Link, useNavigate} from "react-router-dom";
 import ConfigContext from "../provider/ConfigProvider.jsx";
 import {useAuth} from "../provider/AuthProvider.jsx";
+import LangSwitcher from "../Components/LangSwitcher.jsx";
 
 function Nav() {
     const config = useContext(ConfigContext);
@@ -72,7 +73,8 @@ function Nav() {
                                 categories && categories.map((category) => {
                                     return (
                                         <li key={category.id} className="mb-4 lg:mb-0 lg:pe-2" data-twe-nav-item-ref="">
-                                            <a href={`/categories/${category.id}`} className="text-white hover:text-black/80 focus:text-black/80 active:text-black/80 dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2">
+                                            <a href={`/categories/${category.id}`}
+                                               className="text-white hover:text-black/80 focus:text-black/80 active:text-black/80 dark:text-white/60 dark:hover:text-white/80 dark:focus:text-white/80 dark:active:text-white/80 lg:px-2">
                                                 {category.name}
                                             </a>
                                         </li>
@@ -99,6 +101,9 @@ function Nav() {
                                     Search
                                 </button>
                             </div>
+                        </div>
+                        <div>
+                            <LangSwitcher />
                         </div>
                         <a className="me-4 text-neutral-600 dark:text-white" href="#">
                             <span className="[&>svg]:w-8">

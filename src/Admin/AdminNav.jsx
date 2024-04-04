@@ -2,6 +2,7 @@ import {useEffect} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {initFlowbite} from "flowbite";
 import {useAuth} from "../provider/AuthProvider.jsx";
+import LangSwitcher from "../Components/LangSwitcher.jsx";
 
 function AdminNav() {
     const auth = useAuth();
@@ -35,6 +36,7 @@ function AdminNav() {
                             </a>
                         </div>
                         <div className="flex items-center">
+                            <LangSwitcher />
                             <div className="flex items-center ms-3">
                                 <div>
                                     <button type="button"
