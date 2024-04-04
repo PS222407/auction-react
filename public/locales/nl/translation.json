@@ -3,6 +3,7 @@
   "validation": {
     "required": "{{field}} is verplicht",
     "max_length": "{{field}} mag niet langer zijn dan {{max}} tekens",
+    "number_max": "{{field}} moet kleiner zijn dan {{max}}",
     "number_min": "{{field}} moet groter zijn dan {{min}}",
     "email": "{{field}} moet een geldig e-mailadres zijn",
     "password_confirm": "wachtwoorden komen niet overeen"
@@ -18,6 +19,7 @@
     "Password": "wachtwoord",
     "Email": "e-mail",
     "Confirm Password": "bevestig wachtwoord",
+    "Price In Cents": "prijs",
     "Image": "afbeelding"
   }
 }
