@@ -92,10 +92,11 @@ export const AuthProvider = ({children}) => {
         } else if (response.status === 413) {
             toast("File is too large", {type: "error"})
         } else if (response.status === 400) {
-            const errorObject = JSON.parse(data.errors[0].errorMessage);
-            let errorMessage = data.message ?? t(errorObject.key, {
-                field: t(`propertyNames.${errorObject.propertyName}`),
-                max: errorObject.maxLength
+            const error = JSON.parse(data.errors[0].errorMessage);
+            let errorMessage = data.message ?? t(error.key, {
+                field: t(`propertyNames.${error.propertyName}`),
+                max: error.maxLength,
+                min: error.minValue,
             });
 
             toast(data.message ?? errorMessage, {type: "error"});

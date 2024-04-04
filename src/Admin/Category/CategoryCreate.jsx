@@ -5,6 +5,8 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import FormErrors from "../../Components/FormErrors.jsx";
+import {string, object} from "yup";
 
 function CategoryCreate() {
     const config = useContext(ConfigContext);
@@ -17,6 +19,26 @@ function CategoryCreate() {
         icon: '',
     });
 
+    const categorySchema = object({
+        name: string().max(255).required().label("Name"),
+        icon: string().max(1_000_000).required().label("Icon"),
+    });
+
+    async function validate() {
+        try {
+            await categorySchema.validate(categoryForm, {abortEarly: false});
+            setErrors([]);
+            return true;
+        } catch (e) {
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
+        }
+    }
+
     function handleFormChange(value, name) {
         setCategoryForm(prevState => ({
             ...prevState,
@@ -27,7 +49,9 @@ function CategoryCreate() {
     async function handleSubmitCategory(e) {
         e.preventDefault();
 
-        await postCreateCategory();
+        if (await validate()) {
+            await postCreateCategory();
+        }
     }
 
     async function postCreateCategory() {
@@ -42,9 +66,7 @@ function CategoryCreate() {
         }, auth.user);
         setFormIsLoading(false);
 
-        alert(response.status);
-
-        setErrors(response.status === 400 ? data.errors : []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)) : []);
         if (response.status === 201) {
             toast("Created successfully", {type: "success"});
             return navigate("/admin/categories");
@@ -58,12 +80,7 @@ function CategoryCreate() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 data-cy={"category-create"} className={"text-4xl font-bold text-black"}>Create category</h1>
-
-                    {
-                        errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
-                        })
-                    }
+                    <FormErrors errors={errors} />
 
                     <br/>
 

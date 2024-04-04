@@ -5,12 +5,10 @@ import {toast} from "react-toastify";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
-import {useTranslation} from "react-i18next";
-import {number, object, setLocale, string} from 'yup';
 import FormErrors from "../../Components/FormErrors.jsx";
+import {number, object, string} from "yup";
 
 function ProductCreate() {
-    const {t} = useTranslation();
     const config = useContext(ConfigContext);
     const auth = useAuth();
     const navigate = useNavigate();
@@ -24,30 +22,18 @@ function ProductCreate() {
         category: null,
     });
 
-    setLocale({
-        mixed: {
-            required: JSON.stringify({key: "validation.required", propertyName: "${label}"}),
-        },
-        string: {
-            max: JSON.stringify({key: "validation.max_length", propertyName: "${label}", maxLength: "${max}"}),
-        }
-        // number: {
-        //     min: t("validation.required", {field: "${path}"})"NeA ${min}",
-        // }
-    });
-
-    let productSchema = object({
-        name: string().max(255).required().label("Name"),
-        description: string().max(1_000_000).required().label("Description"),
-        image: string().required().label("Image"),
-        category: number().integer().required().label("Category"),
-    });
-
     useEffect(() => {
         if (auth.user) {
             getCategories();
         }
     }, [auth.user]);
+
+    const productSchema = object({
+        name: string().max(255).required().label("Name"),
+        description: string().max(1_000_000).required().label("Description"),
+        image: string().required().label("Image"),
+        category: number().integer().required().label("Category"),
+    });
 
     async function validate() {
         try {
@@ -110,7 +96,7 @@ function ProductCreate() {
 
         setFormIsLoading(false);
 
-        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)): []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)) : []);
         if (response.status === 201) {
             toast("Created successfully", {type: "success"});
             return navigate("/admin/products");
@@ -123,9 +109,6 @@ function ProductCreate() {
 
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
-
-                    <button onClick={() => validate()}>validate</button>
-
                     <h1 data-cy={"product-create"} className={"text-4xl font-bold text-black"}>Create product</h1>
                     <FormErrors errors={errors} />
 
