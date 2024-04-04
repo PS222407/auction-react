@@ -6,6 +6,8 @@ import Nav from "../../Layout/Nav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {object, string, ref as yupRef} from "yup";
+import FormErrors from "../../Components/FormErrors.jsx";
 
 function RegisterPage() {
     const navigate = useNavigate();
@@ -23,6 +25,27 @@ function RegisterPage() {
         initTWE({Input, Ripple});
     }, []);
 
+    const registerSchema = object({
+        email: string().email().required().label("Email"),
+        password: string().required().label("Password"),
+        confirmPassword: string().required().oneOf([yupRef('password'), null], JSON.stringify({key: "validation.password_confirm"})).label("Confirm Password"),
+    });
+
+    async function validate() {
+        try {
+            await registerSchema.validate(registerFormData, {abortEarly: false});
+            setErrors([]);
+            return true;
+        } catch (e) {
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
+        }
+    }
+
     function handleFormChange(value, name) {
         setRegisterFormData(prevState => ({
             ...prevState,
@@ -33,9 +56,7 @@ function RegisterPage() {
     async function handleRegister(e) {
         e.preventDefault();
 
-        if (registerFormData.password !== registerFormData.confirmPassword) {
-            alert("Passwords do not match");
-        }
+        if (!await validate()) return;
 
         setIsLoadingRegister(true);
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/register`, {
@@ -73,12 +94,7 @@ function RegisterPage() {
                         <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
                             <form onSubmit={handleRegister}>
                                 <h1 data-cy={"register-title"} className="mb-6 text-2xl font-bold text-center lg:text-left">Register</h1>
-
-                                {
-                                    errors && errors.map((error, index) => {
-                                        return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
-                                    })
-                                }
+                                <FormErrors errors={errors}/>
 
                                 <div className="relative mb-6" data-twe-input-wrapper-init="">
                                     <input

@@ -5,6 +5,8 @@ import Nav from "../../Layout/Nav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {toast} from "react-toastify";
+import {object, string} from "yup";
+import FormErrors from "../../Components/FormErrors.jsx";
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -20,6 +22,26 @@ function LoginPage() {
         initTWE({Input, Ripple});
     }, []);
 
+    const loginSchema = object({
+        email: string().email().required().label("Email"),
+        password: string().required().label("Password"),
+    });
+
+    async function validate() {
+        try {
+            await loginSchema.validate(loginFormData, {abortEarly: false});
+            setErrors([]);
+            return true;
+        } catch (e) {
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
+        }
+    }
+
     function handleFormChange(value, name) {
         setLoginFormData(prevState => ({
             ...prevState,
@@ -30,11 +52,13 @@ function LoginPage() {
     async function handleLogin(e) {
         e.preventDefault();
 
+        if (!await validate()) return;
+
         setLoginIsLoading(true);
         const [response, data] = await auth.login(loginFormData.email, loginFormData.password);
         setLoginIsLoading(false);
 
-        setErrors(response.status === 400 ? data.errors : []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)) : []);
         if (response.status === 200) {
             toast("Login successful", {type: "success"})
             return navigate("/");
@@ -57,6 +81,8 @@ function LoginPage() {
                         </div>
 
                         <div className="mb-12 md:mb-0 md:w-8/12 lg:w-5/12 xl:w-5/12">
+                            <FormErrors errors={errors}/>
+
                             <form onSubmit={handleLogin}>
                                 <h1 data-cy={"login-title"} className="mb-6 text-2xl font-bold text-center lg:text-left">Login</h1>
 

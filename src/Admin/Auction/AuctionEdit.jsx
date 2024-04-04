@@ -5,6 +5,8 @@ import AdminNav from "../AdminNav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {date, number, object, string} from "yup";
+import FormErrors from "../../Components/FormErrors.jsx";
 
 function AuctionEdit() {
     const config = useContext(ConfigContext);
@@ -26,6 +28,27 @@ function AuctionEdit() {
             getProducts();
         }
     }, [config, auth.user]);
+
+    const auctionSchema = object({
+        productId: string().required().label("Product"),
+        startDateTime: date().required().label("StartDateTime"),
+        durationInSeconds: number().min(1).required().label("Duration In Seconds"),
+    });
+
+    async function validate() {
+        try {
+            await auctionSchema.validate(auctionForm, {abortEarly: false});
+            setErrors([]);
+            return true;
+        } catch (e) {
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
+        }
+    }
 
     async function getProducts() {
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
@@ -69,6 +92,10 @@ function AuctionEdit() {
     async function postEditAuction(e) {
         e.preventDefault();
 
+        var resutl =await validate();
+        console.log(resutl);
+        if (!resutl) return;
+
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction/${id}`, {
             method: "PUT",
             headers: {
@@ -79,7 +106,7 @@ function AuctionEdit() {
             body: JSON.stringify(auctionForm),
         }, auth.user);
 
-        setErrors(response.status === 400 ? data.errors : []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)) : []);
         if (response.status === 204) {
             toast("Updated successfully", {type: "success"});
             return navigate("/admin/auctions");
@@ -93,12 +120,7 @@ function AuctionEdit() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 data-cy={"auction-edit"} className={"text-4xl font-bold text-black"}>Edit auction</h1>
-
-                    {
-                        errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
-                        })
-                    }
+                    <FormErrors errors={errors} />
 
                     <br/>
 
@@ -111,7 +133,7 @@ function AuctionEdit() {
 
                     <br/>
 
-                    <form data-cy={"auction-edit-form"}>
+                    <form data-cy={"auction-edit-form"} onSubmit={postEditAuction}>
                         <div className={"flex flex-col"}>
                             <label htmlFor="product">Product</label>
                             <select name="product" id="product"
@@ -153,8 +175,8 @@ function AuctionEdit() {
                                     <Spinner/>
                                 </div>
                             }
-                            <button data-cy={"auction-submit"} className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
-                                    onClick={postEditAuction}>Submit
+                            <button data-cy={"auction-submit"} className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}>
+                                Submit
                             </button>
                         </div>
                     </form>

@@ -5,6 +5,8 @@ import AdminNav from "../AdminNav.jsx";
 import Spinner from "../../Components/Spinner.jsx";
 import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
+import {date, number, object, string} from "yup";
+import FormErrors from "../../Components/FormErrors.jsx";
 
 function AuctionCreate() {
     const config = useContext(ConfigContext);
@@ -14,9 +16,9 @@ function AuctionCreate() {
     const [products, setProducts] = useState([]);
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [auctionForm, setAuctionForm] = useState({
-        productId: 0,
+        productId: undefined,
         startDateTime: undefined,
-        durationInSeconds: 0,
+        durationInSeconds: undefined,
     });
 
     useEffect(() => {
@@ -24,6 +26,27 @@ function AuctionCreate() {
             getProducts();
         }
     }, [config, auth.user]);
+
+    const auctionSchema = object({
+        productId: string().required().label("Product"),
+        startDateTime: date().required().label("StartDateTime"),
+        durationInSeconds: number().min(1).required().label("Duration In Seconds"),
+    });
+
+    async function validate() {
+        try {
+            await auctionSchema.validate(auctionForm, {abortEarly: false});
+            setErrors([]);
+            return true;
+        } catch (e) {
+            const errors = e.inner.map((error) => {
+                return JSON.parse(error.message);
+            });
+
+            setErrors(errors);
+            return false;
+        }
+    }
 
     async function getProducts() {
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Product`, {
@@ -47,6 +70,8 @@ function AuctionCreate() {
     async function postCreateAuction(e) {
         e.preventDefault();
 
+        if (!await validate()) return;
+
         setFormIsLoading(true);
         const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Auction`, {
             method: "POST",
@@ -58,7 +83,7 @@ function AuctionCreate() {
         }, auth.user);
         setFormIsLoading(false);
 
-        setErrors(response.status === 400 ? data.errors : []);
+        setErrors(response.status === 400 ? data.errors.map((err) => JSON.parse(err.errorMessage)) : []);
         if (response.status === 201) {
             toast("Created successfully", {type: "success"});
             return navigate("/admin/auctions");
@@ -72,12 +97,7 @@ function AuctionCreate() {
             <div className="p-4 sm:ml-64">
                 <div className="p-4 mt-14 max-w-screen-lg">
                     <h1 data-cy={"auction-create"} className={"text-4xl font-bold text-black"}>Create auction</h1>
-
-                    {
-                        errors && errors.map((error, index) => {
-                            return <p key={index} className={"text-red-500"}>{error.errorMessage}</p>
-                        })
-                    }
+                    <FormErrors errors={errors} />
 
                     <br/>
 

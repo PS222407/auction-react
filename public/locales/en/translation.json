@@ -1,0 +1,25 @@
+{
+  "hello-world": "Hello world!",
+  "validation": {
+    "required": "{{field}} is required",
+    "max_length": "{{field}} must not be longer than {{max}} characters long",
+    "number_max": "{{field}} must be less than or equal to {{max}}",
+    "number_min": "{{field}} must be greater than or equal to {{min}}",
+    "email": "{{field}} must be a valid email address",
+    "password_confirm": "Passwords do not match"
+  },
+  "propertyNames": {
+    "Name": "name",
+    "Description": "description",
+    "Category": "category",
+    "Icon": "icon",
+    "StartDateTime": "start date time",
+    "Duration In Seconds": "duration in seconds",
+    "Product": "product",
+    "Password": "password",
+    "Email": "email",
+    "Confirm Password": "confirm password",
+    "Price In Cents": "price",
+    "Image": "image"
+  }
+}

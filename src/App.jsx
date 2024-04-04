@@ -21,8 +21,22 @@ import {ConfigProvider} from "./provider/ConfigProvider.jsx";
 import {AuthProvider} from "./provider/AuthProvider.jsx";
 import AccountPage from "./Account/AccountPage.jsx";
 import AdminRoutes from "./AdminRoutes.jsx";
+import {setLocale} from "yup";
 
 function App() {
+    setLocale({
+        mixed: {
+            required: JSON.stringify({key: "validation.required", propertyName: "${label}"}),
+        },
+        string: {
+            max: JSON.stringify({key: "validation.max_length", propertyName: "${label}", maxLength: "${max}"}),
+            email: JSON.stringify({key: "validation.email", propertyName: "${label}"}),
+        },
+        number: {
+            min: JSON.stringify({key: "validation.number_min", propertyName: "${label}", minValue: "${min}"}),
+        }
+    });
+
     return (
         <ConfigProvider>
             <AuthProvider>
