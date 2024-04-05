@@ -7,6 +7,8 @@ import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import FormErrors from "../../Components/FormErrors.jsx";
 import {number, object, string} from "yup";
+import InputMoney from "../../Components/Inputs/InputMoney.jsx";
+import MoneyTransformer from "../../Services/MoneyTransformer.js";
 
 function ProductCreate() {
     const config = useContext(ConfigContext);
@@ -17,6 +19,7 @@ function ProductCreate() {
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [productForm, setProductForm] = useState({
         name: undefined,
+        price: undefined,
         description: undefined,
         image: undefined,
         category: null,
@@ -30,6 +33,7 @@ function ProductCreate() {
 
     const productSchema = object({
         name: string().max(255).required().label("Name"),
+        price: string().required().label("Price In Cents"),
         description: string().max(1_000_000).required().label("Description"),
         image: string().required().label("Image"),
         category: number().integer().required().label("Category"),
@@ -78,9 +82,16 @@ function ProductCreate() {
     }
 
     async function postCreateProduct() {
+        let safePrice = (new MoneyTransformer()).moneyDB(productForm.price);
+        if (safePrice > 2147483647) {
+            safePrice = 2147483647;
+        }
+        safePrice = !safePrice ? undefined : safePrice;
+
         const formData = new FormData();
 
         productForm.name && formData.append('Name', productForm.name);
+        safePrice && formData.append('PriceInCents', safePrice);
         productForm.description && formData.append('Description', productForm.description);
         productForm.image && formData.append('Image', productForm.image);
         productForm.category && formData.append('CategoryId', productForm.category);
@@ -132,6 +143,14 @@ function ProductCreate() {
                                 name={"name"}
                                 onChange={(e) => handleFormChange(e.target.value, "name")}
                             />
+                        </div>
+                        <div className={"flex flex-col"}>
+                            <label htmlFor="price">Price</label>
+                            <div className={"flex"}>
+                                <span className={"border border-black rounded text-4xl px-2"}>&euro;</span>
+                                <InputMoney name={'price'} label={'undefined'} defaultValue={productForm.price}
+                                            setValue={(value) => handleFormChange(value, "price")} className={"w-full"} />
+                            </div>
                         </div>
                         <div className={"flex flex-col"}>
                             <label htmlFor="description">Description</label>
