@@ -7,6 +7,8 @@ import ConfigContext from "../../provider/ConfigProvider.jsx";
 import {useAuth} from "../../provider/AuthProvider.jsx";
 import {number, object, string} from "yup";
 import FormErrors from "../../Components/FormErrors.jsx";
+import MoneyTransformer from "../../Services/MoneyTransformer.js";
+import InputMoney from "../../Components/Inputs/InputMoney.jsx";
 
 function ProductEdit() {
     const config = useContext(ConfigContext);
@@ -18,6 +20,7 @@ function ProductEdit() {
     const [formIsLoading, setFormIsLoading] = useState(false);
     const [productForm, setProductForm] = useState({
         name: '',
+        price: 0,
         description: '',
         image: '',
         imageUrl: '',
@@ -33,6 +36,7 @@ function ProductEdit() {
 
     const productSchema = object({
         name: string().max(255).required().label("Name"),
+        price: string().required().label("Price In Cents"),
         description: string().max(1_000_000).required().label("Description"),
         category: number().integer().required().label("Category"),
     });
@@ -74,6 +78,7 @@ function ProductEdit() {
         if (response.status === 200) {
             setProductForm({
                 name: data.name,
+                price: data.priceInCents / 100,
                 description: data.description,
                 imageUrl: data.imageUrl,
                 category: data.category.id,
@@ -97,9 +102,16 @@ function ProductEdit() {
     }
 
     async function postEditProduct() {
+        let safePrice = (new MoneyTransformer()).moneyDB(productForm.price);
+        if (safePrice > 2147483647) {
+            safePrice = 2147483647;
+        }
+        safePrice = !safePrice ? undefined : safePrice;
+
         const formData = new FormData();
 
         productForm.name && formData.append('Name', productForm.name);
+        safePrice && formData.append('PriceInCents', safePrice);
         productForm.description && formData.append('Description', productForm.description);
         productForm.image && formData.append('Image', productForm.image);
         productForm.category && formData.append('CategoryId', productForm.category);
@@ -153,6 +165,15 @@ function ProductEdit() {
                             />
                         </div>
                         <div className={"flex flex-col"}>
+                            <label htmlFor="price">Price</label>
+                            <div className={"flex"}>
+                                <span className={"border border-black rounded text-4xl px-2"}>&euro;</span>
+                                <InputMoney name={'price'} label={'undefined'} defaultValue={productForm.price}
+                                            setValue={(value) => handleFormChange(value, "price")}
+                                            className={"w-full"}/>
+                            </div>
+                        </div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="description">Description</label>
                             <textarea
                                 value={productForm.description}
@@ -174,13 +195,15 @@ function ProductEdit() {
                             <label htmlFor="category">category</label>
                             {
                                 productForm.category !== undefined &&
-                                <select defaultValue={productForm.category === null ? "" : productForm.category} name="category" id="category"
+                                <select defaultValue={productForm.category === null ? "" : productForm.category}
+                                        name="category" id="category"
                                         onChange={(e) => handleFormChange(e.target.value, "category")}>
                                     <option value="" disabled>Select your option
                                     </option>
                                     {
                                         categories.map((category) => {
-                                            return <option key={category.id} value={category.id}>{category.name}</option>
+                                            return <option key={category.id}
+                                                           value={category.id}>{category.name}</option>
                                         })
                                     }
                                 </select>
@@ -190,10 +213,11 @@ function ProductEdit() {
                             {
                                 formIsLoading &&
                                 <div className={"flex justify-center mb-2"}>
-                                    <Spinner />
+                                    <Spinner/>
                                 </div>
                             }
-                            <button data-cy={"product-submit"} className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
+                            <button data-cy={"product-submit"}
+                                    className={"bg-blue-500 py-2 px-6 text-white ml-auto block rounded"}
                                     onClick={handleSubmitProduct}>Submit
                             </button>
                         </div>

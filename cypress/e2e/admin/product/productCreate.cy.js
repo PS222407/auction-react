@@ -12,6 +12,7 @@ describe('Load Admin Product Create', () => {
         cy.get('[data-cy="product-create"]').should('be.visible');
 
         cy.get('#name').type('Test Product');
+        cy.get('#price').type('10.7');
         cy.get('#description').type('Test Description');
         cy.get('#image').selectFile('cypress/used_uploads/lilo.png');
         cy.get('#category').select('2');
