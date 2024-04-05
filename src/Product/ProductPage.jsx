@@ -33,6 +33,27 @@ function ProductPage() {
         }
     }
 
+    async function buyNow() {
+        setIsLoading(true);
+        const [response, data] = await auth.fetchWithIntercept(`${config.API_URL}/api/v1/Order`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + auth.user.accessToken,
+            },
+            body: JSON.stringify({
+                ProductId: id,
+            }),
+        }, auth.user);
+        setIsLoading(false);
+
+        console.log(response, data)
+
+        if (response.status === 201) {
+            window.location.href = data.redirectUrl;
+        }
+    }
+
     return (
         <div>
             <Nav/>
@@ -47,7 +68,8 @@ function ProductPage() {
                     <div className={"flex flex-col md:flex-row justify-between gap-y-3 md:gap-20"}>
                         <div className={"w-full"}>
                             <div>
-                                <img className={"w-full aspect-square object-cover md:w-96"} src={product.imageUrl} alt={product.name}/>
+                                <img className={"w-full aspect-square object-cover md:w-96"} src={product.imageUrl}
+                                     alt={product.name}/>
                             </div>
                             <h2 data-cy={'product-name'} className={"font-bold text-xl"}>{product.name}</h2>
                             <div className={"mt-4"}>{product.description}</div>
@@ -87,6 +109,13 @@ function ProductPage() {
                         </div>
                     </div>
                 }
+
+                <br/>
+
+                <div>
+                    <p>If you dont want to wait for an auction you can buy it at any time!</p>
+                    <button onClick={buyNow} className={`py-2 px-8 bg-yellow-500`}>Buy now</button>
+                </div>
             </div>
         </div>
     );
