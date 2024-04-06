@@ -22,6 +22,7 @@ import {AuthProvider} from "./provider/AuthProvider.jsx";
 import AccountPage from "./Account/AccountPage.jsx";
 import AdminRoutes from "./AdminRoutes.jsx";
 import {setLocale} from "yup";
+import OrderConfirmed from "./Order/OrderConfirmed.jsx";
 
 function App() {
     setLocale({
@@ -50,6 +51,7 @@ function App() {
                         <Route path="/products/:id" element={<ProductPage/>}/>
                         <Route path="/auctions/:id" element={<AuctionPage/>}/>
                         <Route path="/account" element={<AccountPage/>}/>
+                        <Route path="/order/:id" element={<OrderConfirmed/>}/>
 
                         {/*ADMIN*/}
                         <Route path="/admin" element={<AdminRoutes><AdminPage/></AdminRoutes>}/>
