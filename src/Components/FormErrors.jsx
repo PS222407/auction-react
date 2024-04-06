@@ -4,7 +4,7 @@ function FormErrors({errors}) {
     const {t} = useTranslation();
 
     return (
-        <>
+        <div data-cy={"form-errors"}>
             {
                 errors && errors.map((error, index) => {
                     const errorMessage = t(error.key, {
@@ -15,7 +15,7 @@ function FormErrors({errors}) {
                     return (<p key={index} className={"text-red-500"}>{errorMessage}</p>)
                 })
             }
-        </>
+        </div>
     );
 }
 

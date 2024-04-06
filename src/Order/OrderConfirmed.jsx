@@ -50,7 +50,7 @@ function OrderConfirmed() {
                     {
                         order &&
                         <>
-                            <div className={`${order.status === "Paid" ? "bg-green-300" : "bg-yellow-300"}  p-4 rounded`}>
+                            <div className={`${order.paymentStatus === "Paid" ? "bg-green-300" : "bg-yellow-300"}  p-4 rounded`}>
                                 <p className={"text-center"}>{order.status === "Paid" ? "Your order has been confirmed" : "Payment is in process"}</p>
                                 <div className={"text-center"}><small>Order ID: {order.id}</small></div>
                             </div>

@@ -78,7 +78,7 @@ function ProductEdit() {
         if (response.status === 200) {
             setProductForm({
                 name: data.name,
-                price: data.priceInCents / 100,
+                price: (data.priceInCents / 100).toString().replace('.', ','),
                 description: data.description,
                 imageUrl: data.imageUrl,
                 category: data.category.id,
