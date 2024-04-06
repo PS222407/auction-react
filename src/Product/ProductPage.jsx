@@ -39,15 +39,13 @@ function ProductPage() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + auth.user.accessToken,
+                "Authorization": "Bearer " + auth.user?.accessToken,
             },
             body: JSON.stringify({
                 ProductId: id,
             }),
         }, auth.user);
         setIsLoading(false);
-
-        console.log(response, data)
 
         if (response.status === 201) {
             window.location.href = data.redirectUrl;
