@@ -1,6 +1,7 @@
 {
   "id": 3,
   "name": "Fidget Spinner",
+  "priceInCents": 1212,
   "description": "A fidget spinner",
   "imageUrl": "https://cdn.webshopapp.com/shops/44056/files/334148720/890x820x2/fidget-fidget-spinner-classic-red.jpg",
   "category": {
