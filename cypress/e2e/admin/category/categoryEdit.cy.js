@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Admin Category Edit', () => {
+describe('Admin Category Edit', () => {
     it('passes', () => {
         cy.intercept('GET', 'https://localhost:44305/api/v1/Category/2', { statusCode: 200, fixture: 'category2.json' }).as('getCategory2')
         cy.intercept('PUT', 'https://localhost:44305/api/v1/Category/2', { statusCode: 204 }).as('updateCategory')

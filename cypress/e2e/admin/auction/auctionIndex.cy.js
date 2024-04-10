@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Admin Auction Index', () => {
+describe('Admin Auction Index', () => {
     it('passes', () => {
         cy.intercept('GET', 'https://localhost:44305/api/v1/Auction', { statusCode: 200, fixture: 'auctions.json' }).as('getAuctions')
 

@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Admin Dashboard', () => {
+describe('Admin Dashboard', () => {
     it('passes', () => {
         cy.login('admin')
 
