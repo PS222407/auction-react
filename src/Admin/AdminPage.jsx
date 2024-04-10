@@ -1,4 +1,4 @@
-import AdminNav from "./AdminNav.jsx";
+import AdminNav from './AdminNav.jsx'
 
 function AdminPage() {
     return (
@@ -6,12 +6,12 @@ function AdminPage() {
             <AdminNav />
 
             <div className="p-4 sm:ml-64">
-                <div data-cy={"admin-dashboard"} className="p-4 mt-14">
+                <div data-cy={'admin-dashboard'} className="p-4 mt-14">
                     Admin Dashboard
                 </div>
             </div>
         </>
-    );
+    )
 }
 
-export default AdminPage;
+export default AdminPage

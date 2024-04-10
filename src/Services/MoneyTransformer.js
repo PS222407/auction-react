@@ -5,17 +5,17 @@ export default class MoneyTransformer {
      * @return {number}
      */
     moneyDB(price) {
-        let newFormat;
+        let newFormat
         if (/[.,]/.test(price)) {
             if (price.split(/[.,]/)[1].length === 1) {
-                newFormat = parseInt(price.replace(/[.,]/g, ''), 10) * 10;
+                newFormat = parseInt(price.replace(/[.,]/g, ''), 10) * 10
             } else {
-                newFormat = parseInt(price.replace(/[.,]/g, ''), 10);
+                newFormat = parseInt(price.replace(/[.,]/g, ''), 10)
             }
         } else {
-            newFormat = parseInt(price, 10) * 100;
+            newFormat = parseInt(price, 10) * 100
         }
 
-        return newFormat;
+        return newFormat
     }
 }

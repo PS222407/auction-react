@@ -1,17 +1,17 @@
-import {useAuth} from "./provider/AuthProvider.jsx";
+import { useAuth } from './provider/AuthProvider.jsx'
 
-function AdminRoutes({children}) {
-    const auth = useAuth();
+function AdminRoutes({ children }) {
+    const auth = useAuth()
 
     if (auth.user === undefined) {
-        return "Loading...";
+        return 'Loading...'
     } else if (auth.user === null) {
-        return "Unauthorized...";
-    } else if (auth.user.roles.includes("Admin") === false) {
-        return "Forbidden...";
+        return 'Unauthorized...'
+    } else if (auth.user.roles.includes('Admin') === false) {
+        return 'Forbidden...'
     }
 
-    return children;
+    return children
 }
 
-export default AdminRoutes;
+export default AdminRoutes
