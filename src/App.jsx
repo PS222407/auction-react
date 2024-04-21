@@ -62,7 +62,6 @@ function App() {
                                 </AdminRoutes>
                             }
                         />
-
                         <Route
                             path="/admin/products"
                             element={
