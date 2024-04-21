@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Admin Auction Create', () => {
+describe('Admin Auction Create', () => {
     it('passes', () => {
         cy.intercept('GET', 'https://localhost:44305/api/v1/Product', { statusCode: 200, fixture: 'products.json' }).as('getProducts')
         cy.intercept('POST', 'https://localhost:44305/api/v1/Auction', { statusCode: 201, fixture: 'productCreate' }).as('createAuction')

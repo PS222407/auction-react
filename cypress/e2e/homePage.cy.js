@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Homepage', () => {
+describe('Homepage', () => {
     it('passes', () => {
         cy.intercept('GET', '/config.json', { statusCode: 200, fixture: 'config.json' }).as('getConfig')
         cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { statusCode: 200, fixture: 'categories.json' }).as('getCategories')

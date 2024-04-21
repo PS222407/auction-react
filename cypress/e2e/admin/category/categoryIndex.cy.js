@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Admin Category Index', () => {
+describe('Admin Category Index', () => {
     it('passes', () => {
         cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { statusCode: 200, fixture: 'categories.json' }).as('getCategories')
 

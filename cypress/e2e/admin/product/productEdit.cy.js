@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Admin Product Edit', () => {
+describe('Admin Product Edit', () => {
     it('passes', () => {
         cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { statusCode: 200, fixture: 'categories.json' }).as('getCategories')
         cy.intercept('GET', 'https://localhost:44305/api/v1/Product/3', { statusCode: 200, fixture: 'product3.json' }).as('getProduct3')

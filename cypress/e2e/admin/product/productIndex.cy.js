@@ -1,5 +1,5 @@
 /* eslint-disable */
-describe('Load Admin Product Index', () => {
+describe('Admin Product Index', () => {
     it('passes', () => {
         cy.intercept('GET', 'https://localhost:44305/api/v1/Product', { statusCode: 200, fixture: 'products.json' }).as('getProducts')
 
