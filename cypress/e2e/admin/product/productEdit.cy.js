@@ -1,6 +1,6 @@
 /* eslint-disable */
 describe('Admin Product Edit', () => {
-    it('passes', () => {
+    beforeEach(() => {
         cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { statusCode: 200, fixture: 'categories.json' }).as('getCategories')
         cy.intercept('GET', 'https://localhost:44305/api/v1/Product/3', { statusCode: 200, fixture: 'product3.json' }).as('getProduct3')
         cy.intercept('PUT', 'https://localhost:44305/api/v1/Product/3', { statusCode: 204 }).as('editProduct3')
@@ -9,7 +9,9 @@ describe('Admin Product Edit', () => {
         cy.login('admin')
 
         cy.visit('http://localhost:5173/admin/products/3/edit')
+    })
 
+    it('passes', () => {
         cy.get('[data-cy="product-edit"]').should('be.visible')
 
         cy.get('#name').clear().type('Test Product')
@@ -23,15 +25,6 @@ describe('Admin Product Edit', () => {
     })
 
     it('fails validation', () => {
-        cy.intercept('GET', 'https://localhost:44305/api/v1/Category', { statusCode: 200, fixture: 'categories.json' }).as('getCategories')
-        cy.intercept('GET', 'https://localhost:44305/api/v1/Product/3', { statusCode: 200, fixture: 'product3.json' }).as('getProduct3')
-        cy.intercept('PUT', 'https://localhost:44305/api/v1/Product/3', { statusCode: 204 }).as('editProduct3')
-        cy.intercept('GET', 'https://localhost:44305/api/v1/Product', { statusCode: 200, fixture: 'products.json' }).as('getProducts')
-
-        cy.login('admin')
-
-        cy.visit('http://localhost:5173/admin/products/3/edit')
-
         cy.get('[data-cy="product-edit"]').should('be.visible')
 
         cy.get('#name').clear()
