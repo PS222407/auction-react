@@ -27,6 +27,7 @@ describe('Admin Product Edit', () => {
 
         it('fills in incomplete data and fails with errormessage', () => {
             cy.get('[data-cy="product-edit"]').should('be.visible')
+            cy.get('#name').should('not.have.value', '')
 
             cy.get('#name').clear()
             cy.get('#description').clear().type('Test Description')
